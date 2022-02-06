@@ -36,6 +36,6 @@ jobs:
           BOT_NAME: ${{ secrets.BOT_NAME }}
           BOT_PASS: ${{ secrets.BOT_PASS }}
         run: |
-          echo "('GeneralNotability', BotPassword('${BOT_NAME}', '${BOT_PASS}'))" > user-password.py
+          echo "('Xiplus', BotPassword('${BOT_NAME}', '${BOT_PASS}'))" > user-password.py
           chmod 600 user-password.py
           python3 deploy.py --file spihelper.js --target User:Xiplus/js/spihelper-dev.js --summary "Deploying revision ${GITHUB_SHA}"

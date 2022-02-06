@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GeneralNotability/spihelper.git"
+    "url": "git+https://github.com/Xiplus/spihelper-zhwiki.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/GeneralNotability/spihelper/issues"
+    "url": "https://github.com/Xiplus/spihelper-zhwiki/issues"
   },
-  "homepage": "https://github.com/GeneralNotability/spihelper#readme"
+  "homepage": "https://github.com/Xiplus/spihelper-zhwiki#readme"
 }

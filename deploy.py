@@ -3,7 +3,7 @@ import pywikibot
 
 
 def main(target, file_to_deploy, summary):
-    site = pywikibot.Site('en', 'wikipedia')
+    site = pywikibot.Site('zh', 'wikipedia')
     page = pywikibot.Page(site, target)
     with open(file_to_deploy, 'r') as source_file:
         page.text = source_file.read()

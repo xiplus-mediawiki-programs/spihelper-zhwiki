@@ -1752,7 +1752,7 @@ async function spiHelperPostRenameCleanup (oldCasePage) {
 
   // The new case's archivenotice should be updated with the new name
   let newPageText = await spiHelperGetPageText(spiHelperPageName, true)
-  newPageText = newPageText.replace(spiHelperArchiveNoticeRegex, '{{SPIarchive notice|' + spiHelperCaseName + '}}')
+  newPageText = newPageText.replace(spiHelperArchiveNoticeRegex, '{{SPI archive notice|' + spiHelperCaseName + '}}')
   // We also want to add the previous master to the sock list
   // We use SOCK_SECTION_RE_WITH_NEWLINE to clean up any extraneous whitespace
   newPageText = newPageText.replace(spiHelperSockSectionWithNewlineRegex, '====疑似傀儡====' +
@@ -1865,7 +1865,7 @@ async function spiHelperArchiveCaseSection (sectionId) {
   // Update the archive
   let archivetext = await spiHelperGetPageText(spiHelperGetArchiveName(), true)
   if (!archivetext) {
-    archivetext = '__TOC__\n{{SPIarchive notice|1=' + spiHelperCaseName + '}}\n{{SPIpriorcases}}'
+    archivetext = '__TOC__\n{{SPI archive notice|1=' + spiHelperCaseName + '}}\n{{SPIpriorcases}}'
   } else {
     archivetext = archivetext.replace(/<br\s*\/>\s*{{SPIpriorcases}}/gi, '\n{{SPIpriorcases}}') // fmt fix whenever needed.
   }
@@ -2072,7 +2072,7 @@ async function spiHelperMoveCaseSection (target, sectionId) {
 
   if (targetPageText === '') {
     // Pre-load the split target with the SPI templates if it's empty
-    targetPageText = '<noinclude>__TOC__</noinclude>\n{{SPIarchive notice|' + target + '}}\n{{SPIpriorcases}}'
+    targetPageText = '<noinclude>__TOC__</noinclude>\n{{SPI archive notice|' + target + '}}\n{{SPIpriorcases}}'
   }
   targetPageText += '\n' + sectionText
 
@@ -3563,7 +3563,7 @@ async function spiHelperParseArchiveNotice (page) {
  * @return {string} New archivenotice
  */
 function spiHelperMakeNewArchiveNotice (username, archiveNoticeParams) {
-  let notice = '{{SPIarchive notice|1=' + username
+  let notice = '{{SPI archive notice|1=' + username
   if (archiveNoticeParams.xwiki) {
     notice += '|crosswiki=yes'
   }

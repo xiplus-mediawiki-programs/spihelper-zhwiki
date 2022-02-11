@@ -132,7 +132,7 @@ const spiHelperIsThisPageAnArchive = mw.config.get('wgPageName').match('Wikipedi
 let spiHelperCaseName
 
 if (spiHelperIsThisPageAnArchive) {
-  spiHelperCaseName = spiHelperPageName.replace(/Wikipedia:傀儡調查\/案件\//g, '').replace(/\/存檔/, '')
+  spiHelperCaseName = spiHelperPageName.replace(/Wikipedia:傀儡調查\/案件\//g, '').replace(/\/存檔.*/, '')
 } else {
   spiHelperCaseName = spiHelperPageName.replace(/Wikipedia:傀儡調查\/案件\//g, '')
 }
@@ -448,7 +448,7 @@ const spiHelperActionViewHTML = `
         <td style="text-align:center;" class="spiHelper_adminClass"><input type="checkbox" id="spiHelper_link_checkUserWikiSearch"/></td>
       </tr>
     </table>
-    <span><input type="button" id="moreSerks" value="` + '新增一行' + `" onclick="spiHelperAddBlankUserLine("block");"/></span>
+    <span><input type="button" id="moreSerks" value="新增一行" onclick="spiHelperAddBlankUserLine("block");"/></span>
   </div>
   <div id="spiHelper_blockTagView">
     <h4 id="spiHelper_blockTagHeader">` + wgULS('封禁和标记傀儡', '封鎖和標記傀儡') + `</h4>

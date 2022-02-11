@@ -262,7 +262,7 @@ const spiHelperHiddenCharNormRegex = /\u200E/g
 /* Other globals */
 
 /** @type{string} Advert to append to the edit summary of edits */
-const spihelperAdvert = '（使用[[:w:zh:User:Xiplus/spihelper|spihelper.js]]）'
+const spihelperAdvert = '（使用[[:w:zh:User:Xiplus/js/spihelper|spihelper.js]]）'
 
 /* Used by the link view */
 const spiHelperLinkViewURLFormats = {
@@ -334,7 +334,7 @@ async function spiHelperInit () {
   spiHelperCaseSections = await spiHelperGetInvestigationSectionIDs()
 
   // Load archivenotice params
-  spiHelperArchiveNoticeParams = await spiHelperParseArchiveNotice(spiHelperPageName.replace(/\/Archive/, ''))
+  spiHelperArchiveNoticeParams = await spiHelperParseArchiveNotice(spiHelperPageName.replace(/\/存檔/, ''))
 
   // First, insert the template text
   displayMessage(spiHelperTopViewHTML)
@@ -2266,7 +2266,7 @@ async function spiHelperGetPageText (title, show, sectionId = null) {
   }
   // Build the link element (use JQuery so we get escapes and such)
   const $link = $('<a>').attr('href', mw.util.getUrl(title)).attr('title', title).text(title)
-  $statusLine.html('Getting page ' + $link.prop('outerHTML'))
+  $statusLine.html(wgULS('正在抓取页面', '正在抓取頁面') + $link.prop('outerHTML'))
 
   const finalTitle = spiHelperStripXWikiPrefix(title)
 
@@ -2288,10 +2288,10 @@ async function spiHelperGetPageText (title, show, sectionId = null) {
     const pageid = response.query.pageids[0]
 
     if (pageid === '-1') {
-      $statusLine.html('Page ' + $link.html() + ' does not exist')
+      $statusLine.html(wgULS('页面', '頁面') + $link.html() + '不存在')
       return ''
     }
-    $statusLine.html('Got ' + $link.html())
+    $statusLine.html('已抓取' + $link.html())
     return response.query.pages[pageid].revisions[0].slots.main['*']
   } catch (error) {
     $statusLine.addClass('spihelper-errortext').html('<b>' + wgULS('获取', '取得') + $link.html() + wgULS('失败', '失敗') + '</b>：' + error)
@@ -2350,7 +2350,7 @@ async function spiHelperEditPage (title, newtext, summary, createonly, watch, wa
   }
   try {
     await api.postWithToken('csrf', request)
-    $statusLine.html('Saved ' + $link.prop('outerHTML'))
+    $statusLine.html(wgULS('已保存', '已儲存') + $link.prop('outerHTML'))
     spiHelperActiveOperations.set(activeOpKey, 'success')
     return true
   } catch (error) {
@@ -2413,7 +2413,7 @@ async function spiHelperPurgePage (title) {
   'use strict'
   const $statusLine = $('<li>').appendTo($('#spiHelper_status', document))
   const $link = $('<a>').attr('href', mw.util.getUrl(title)).attr('title', title).text(title)
-  $statusLine.html('Purging ' + $link.prop('outerHTML'))
+  $statusLine.html('清除' + $link.prop('outerHTML') + wgULS('的缓存', '的快取'))
   const strippedTitle = spiHelperStripXWikiPrefix(title)
 
   const api = spiHelperGetAPI(title)
@@ -2422,7 +2422,7 @@ async function spiHelperPurgePage (title) {
       action: 'purge',
       titles: strippedTitle
     })
-    $statusLine.html('Purged ' + $link.prop('outerHTML'))
+    $statusLine.html('已清除' + $link.prop('outerHTML') + wgULS('的缓存', '的快取'))
   } catch (error) {
     $statusLine.addClass('spihelper-errortext').html('<b>' + '清除' + $link.prop('outerHTML') + wgULS('的缓存失败', '的快取失敗') + '</b>：' + error)
   }

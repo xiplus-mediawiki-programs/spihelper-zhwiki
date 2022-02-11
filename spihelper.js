@@ -334,7 +334,7 @@ async function spiHelperInit () {
   spiHelperCaseSections = await spiHelperGetInvestigationSectionIDs()
 
   // Load archivenotice params
-  spiHelperArchiveNoticeParams = await spiHelperParseArchiveNotice(spiHelperPageName.replace(/\/存檔/, ''))
+  spiHelperArchiveNoticeParams = await spiHelperParseArchiveNotice(spiHelperPageName.replace(/\/存檔.*/, ''))
 
   // First, insert the template text
   displayMessage(spiHelperTopViewHTML)

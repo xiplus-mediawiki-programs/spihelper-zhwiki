@@ -427,10 +427,10 @@ const spiHelperActionViewHTML = `
     </ul>
   </div>
   <div id="spiHelper_sockLinksView">
-    <h4 id="spiHelper_sockLinksHeader">Useful links for socks</h4>
+    <h4 id="spiHelper_sockLinksHeader">` + wgULS('傀儡常用链接', '傀儡常用連結') + `</h4>
     <table id="spiHelper_userInfoTable" style="border-collapse:collapse;">
       <tr>
-        <th>Username</th>
+        <th>` + wgULS('用户名', '使用者名稱') + `</th>
         <th><span title="Editor interaction analyser" class="rt-commentedText spihelper-hovertext">Interaction analyser</span></th>
         <th><span title="Interaction timeline" class="rt-commentedText spihelper-hovertext">Interaction timeline</span></th>
         <th><span title="Timecard comparison - SPI tools" class="rt-commentedText spihelper-hovertext">Timecard</span></th>
@@ -439,7 +439,7 @@ const spiHelperActionViewHTML = `
         <th class="spiHelper_cuClass"><span title="CheckUser wiki search" class="rt-commentedText spihelper-hovertext">CU wiki</span></th>
       </tr>
       <tr style="border-bottom:2px solid black">
-        <td style="text-align:center;">(All users)</td>
+        <td style="text-align:center;">` + wgULS('（所有用户）', '（所有使用者）') + `</td>
         <td style="text-align:center;"><input type="checkbox" id="spiHelper_link_editorInteractionAnalyser"/></td>
         <td style="text-align:center;"><input type="checkbox" id="spiHelper_link_interactionTimeline"/></td>
         <td style="text-align:center;"><input type="checkbox" id="spiHelper_link_timecardSPITools"/></td>
@@ -448,7 +448,7 @@ const spiHelperActionViewHTML = `
         <td style="text-align:center;" class="spiHelper_adminClass"><input type="checkbox" id="spiHelper_link_checkUserWikiSearch"/></td>
       </tr>
     </table>
-    <span><input type="button" id="moreSerks" value="Add Row" onclick="spiHelperAddBlankUserLine("block");"/></span>
+    <span><input type="button" id="moreSerks" value="` + '新增一行' + `" onclick="spiHelperAddBlankUserLine("block");"/></span>
   </div>
   <div id="spiHelper_blockTagView">
     <h4 id="spiHelper_blockTagHeader">` + wgULS('封禁和标记傀儡', '封鎖和標記傀儡') + `</h4>
@@ -1617,7 +1617,7 @@ async function spiHelperPerformActions () {
     } else {
       editsummary = '留言'
     }
-    logMessage += '\n** ' + '留言'
+    logMessage += '\n** 留言'
   }
 
   if (spiHelperActionsSelected.Close) {
@@ -2325,7 +2325,7 @@ async function spiHelperEditPage (title, newtext, summary, createonly, watch, wa
   const $statusLine = $('<li>').appendTo($('#spiHelper_status', document))
   const $link = $('<a>').attr('href', mw.util.getUrl(title)).attr('title', title).text(title)
 
-  $statusLine.html('Editing ' + $link.prop('outerHTML'))
+  $statusLine.html(wgULS('正在编辑', '正在編輯') + $link.prop('outerHTML'))
 
   if (!baseRevId) {
     baseRevId = await spiHelperGetPageRev(title)
@@ -2424,7 +2424,7 @@ async function spiHelperPurgePage (title) {
     })
     $statusLine.html('已清除' + $link.prop('outerHTML') + wgULS('的缓存', '的快取'))
   } catch (error) {
-    $statusLine.addClass('spihelper-errortext').html('<b>' + '清除' + $link.prop('outerHTML') + wgULS('的缓存失败', '的快取失敗') + '</b>：' + error)
+    $statusLine.addClass('spihelper-errortext').html('<b>清除' + $link.prop('outerHTML') + wgULS('的缓存失败', '的快取失敗') + '</b>：' + error)
   }
 }
 

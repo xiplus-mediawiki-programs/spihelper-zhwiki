@@ -2067,7 +2067,7 @@ async function spiHelperMoveCaseSection (target, sectionId) {
   // Have to do this transform before concatenating with targetPageText so that the
   // "originally filed" goes in the correct section
   sectionText = sectionText.replace(spiHelperSockSectionWithNewlineRegex, '====疑似傀儡====' +
-  '\n* {{checkuser|1=' + oldCaseName + '|bullet=no}}（{{clerknote}}' + wgULS('', '原始案件名稱') + '）\n')
+  '\n* {{checkuser|1=' + spiHelperCaseName + '|bullet=no}}（{{clerknote}}' + wgULS('', '原始案件名稱') + '）\n')
 
   if (targetPageText === '') {
     // Pre-load the split target with the SPI templates if it's empty

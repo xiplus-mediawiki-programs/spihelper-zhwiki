@@ -1,4 +1,4 @@
 family = 'wikipedia'
-mylang = 'en'
-usernames['wikipedia']['en'] = 'GeneralNotability'
+mylang = 'zh'
+usernames['wikipedia']['zh'] = 'Xiplus'
 password_file = 'user-password.py'

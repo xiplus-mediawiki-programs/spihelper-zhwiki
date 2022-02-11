@@ -1,6 +1,6 @@
 name: Deploy to Wikipedia (main branch)
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the develop branch
   push:
@@ -36,7 +36,7 @@ jobs:
           BOT_NAME: ${{ secrets.BOT_NAME }}
           BOT_PASS: ${{ secrets.BOT_PASS }}
         run: |
-          echo "('GeneralNotability', BotPassword('${BOT_NAME}', '${BOT_PASS}'))" > user-password.py
+          echo "('Xiplus', BotPassword('${BOT_NAME}', '${BOT_PASS}'))" > user-password.py
           chmod 600 user-password.py
-          python3 deploy.py --file spihelper.js --target User:GeneralNotability/spihelper.js --summary "Deploying revision [$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/${GITHUB_SHA} ${GITHUB_SHA}]"
-          python3 deploy.py --file spihelper.css --target User:GeneralNotability/spihelper.css --summary "Deploying revision [$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/${GITHUB_SHA} ${GITHUB_SHA}]"
+          python3 deploy.py --file spihelper.js --target User:Xiplus/js/spihelper.js --summary "Deploying revision ${GITHUB_SHA}"
+          # python3 deploy.py --file spihelper.css --target User:Xiplus/js/spihelper.css --summary "Deploying revision ${GITHUB_SHA}"

@@ -458,12 +458,12 @@ const spiHelperActionViewHTML = `
         <label for="spiHelper_noblock">` + wgULS('不要进行任何封禁（这会覆盖下方的“封禁”单选框）', '不要進行任何封鎖（這會覆蓋下方的「封鎖」單選框）') + `</label>
       </li>
       <li class="spiHelper_adminClass">
-        <input type="checkbox" name="spiHelper_override" id="spiHelper_override" />
+        <input type="checkbox" checked="checked" name="spiHelper_override" id="spiHelper_override" />
         <label for="spiHelper_override">` + wgULS('覆盖现有的任何封禁', '覆蓋現有的任何封鎖') + `</label>
       </li>
       <li class="spiHelper_clerkClass">
-        <input type="checkbox" checked="checked" name="spiHelper_tagAccountsWithoutLocalAccount" id="spiHelper_tagAccountsWithoutLocalAccount" />
-        <label for"spiHelper_tagAccountsWithoutLocalAccount">` + wgULS('标记没有附加本地账户的账户。', '標記沒有附加本地帳號的帳號。') + `</label>
+        <input type="checkbox" name="spiHelper_tagAccountsWithoutLocalAccount" id="spiHelper_tagAccountsWithoutLocalAccount" />
+        <label for="spiHelper_tagAccountsWithoutLocalAccount">` + wgULS('标记没有附加本地账户的账户。', '標記沒有附加本地帳號的帳號。') + `</label>
       </li>
       <li class="spiHelper_cuClass">
         <input type="checkbox" name="spiHelper_cublock" id="spiHelper_cublock" />
@@ -1302,7 +1302,8 @@ async function spiHelperPerformActions () {
         if (blockedList) {
           blockedList += '、'
         }
-        blockedList += '{{noping|' + blockEntry.username + '}}'
+        blockedList += '{{unping|' + blockEntry.username + '}}'
+        console.log('in blockedList', blockedList)
 
         if (isIPRange) {
           // There isn't really a talk page for an IP range, so return here before we reach that section
@@ -1317,7 +1318,7 @@ async function spiHelperPerformActions () {
             isSock = false
           }
           if (isSock) {
-            newText = '== ' + wgULS('因却认为傀儡而被封禁', '因卻認為傀儡而被封鎖') + ' ==\n'
+            newText = '== ' + wgULS('因确认为傀儡而被封禁', '因確認為傀儡而被封鎖') + ' ==\n'
           } else {
             newText = '== ' + wgULS('因滥用傀儡而被封禁', '因濫用傀儡而被封鎖') + ' ==\n'
           }
@@ -1349,9 +1350,11 @@ async function spiHelperPerformActions () {
         }
       })
     }
+    console.log('out blockedList', blockedList)
     if (blockedList) {
       logMessage += '\n** ' + wgULS('已封禁', '已封鎖') + blockedList
     }
+    console.log(logMessage)
 
     let tagged = ''
     if (sockmaster) {
@@ -1372,7 +1375,7 @@ async function spiHelperPerformActions () {
         if (!existsGlobally && !existsLocally) {
           // Skip, don't tag accounts that don't exist
           const $statusLine = $('<li>').appendTo($('#spiHelper_status', document))
-          $statusLine.addClass('spihelper-errortext').html('<b>The account ' + tagEntry.username + ' does not exist and so has not been tagged.</b>')
+          $statusLine.addClass('spihelper-errortext').html('<b>' + wgULS('账户', '帳號') + tagEntry.username + wgULS('不存在，所以没有进行标记。', '不存在，所以沒有進行標記。') + '</b>')
           return
         }
         if (!($('#spiHelper_tagAccountsWithoutLocalAccount', $actionView).prop('checked')) && existsGlobally && !existsLocally) {
@@ -1477,7 +1480,7 @@ async function spiHelperPerformActions () {
         if (tagged) {
           tagged += '、'
         }
-        tagged += '{{noping|' + tagEntry.username + '}}'
+        tagged += '{{unping|' + tagEntry.username + '}}'
       })
       if (tagged) {
         logMessage += '\n** ' + wgULS('已标记', '已標記') + tagged
@@ -1554,9 +1557,9 @@ async function spiHelperPerformActions () {
         }
         templateContent += '|' + (matchCount + 1) + '=' + globalLockEntry
         if (locked) {
-          locked += ', '
+          locked += '、'
         }
-        locked += '{{noping|1=' + globalLockEntry + '}}'
+        locked += '{{unping|1=' + globalLockEntry + '}}'
         matchCount++
       })
 
@@ -1586,10 +1589,10 @@ async function spiHelperPerformActions () {
         let srgText = await spiHelperGetPageText('meta:Steward requests/Global', false)
         srgText = srgText.replace(/\n+(== See also == *\n)/, '\n\n' + message + '\n\n$1')
         spiHelperEditPage('meta:Steward requests/Global', srgText, 'global lock request for ' + heading, false, 'nochange')
-        $statusAnchor.append($('<li>').text('Filing global lock request'))
+        $statusAnchor.append($('<li>').text(wgULS('提交全域锁定请求', '提交全域鎖定請求')))
       }
       if (locked) {
-        logMessage += '\n** requested locks for ' + locked
+        logMessage += '\n** ' + wgULS('请求锁定：', '請求鎖定：') + locked
       }
     }
   }
@@ -1693,8 +1696,7 @@ async function spiHelperPerformActions () {
  */
 async function spiHelperLog (logString) {
   const now = new Date()
-  const dateString = now.toLocaleString('en', { month: 'long' }) + ' ' +
-    now.toLocaleString('en', { year: 'numeric' })
+  const dateString = now.toLocaleString('zh', { year: 'numeric' }) + now.toLocaleString('zh', { month: 'short' })
   const dateHeader = '==\\s*' + dateString + '\\s*=='
   const dateHeaderRe = new RegExp(dateHeader, 'i')
   const dateHeaderReWithAnyDate = /==.*?==/i
@@ -2192,7 +2194,7 @@ function spiHelperGetMaxPostExpandSize () {
 function spiHelperGetInterwikiPrefix () {
   // Mostly copied from https://github.com/Xi-Plus/twinkle-global/blob/master/morebits.js
   // Most of this should be overkill (since most of these wikis don't have checkuser support)
-  /** @type {string[]} */ const temp = mw.config.get('wgServer').replace(/^(https?)?\/\//, '').split('.')
+  /** @type {string[]} */ const temp = mw.config.get('wgServer').replace(/^(https?:)?\/\//, '').split('.')
   const wikiLang = temp[0]
   const wikiFamily = temp[1]
   switch (wikiFamily) {
@@ -2478,7 +2480,7 @@ async function spiHelperBlockUser (user, duration, reason, reblock, anononly, ac
       watchlistexpiry: watchExpiry,
       user: user
     })
-    $statusLine.html('Blocked ' + $link.prop('outerHTML'))
+    $statusLine.html(wgULS('已封禁', '已封鎖') + $link.prop('outerHTML'))
     spiHelperActiveOperations.set(activeOpKey, 'success')
     return true
   } catch (error) {

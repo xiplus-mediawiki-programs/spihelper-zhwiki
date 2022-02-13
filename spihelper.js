@@ -263,7 +263,7 @@ const spiHelperHiddenCharNormRegex = /\u200E/g
 /* Other globals */
 
 /** @type{string} Advert to append to the edit summary of edits */
-const spihelperAdvert = '（使用[[:w:zh:User:Xiplus/js/spihelper|spihelper.js]]）'
+const spihelperAdvert = '（使用[[:w:zh:User:Xiplus/js/spihelper|spihelper]]）'
 
 /* Used by the link view */
 const spiHelperLinkViewURLFormats = {
@@ -955,7 +955,7 @@ async function spiHelperOneClickArchive () {
   displayMessage('<ul id="spiHelper_status"/>')
   await spiHelperArchiveCase()
   await spiHelperPurgePage(spiHelperPageName)
-  const logMessage = '* [[' + spiHelperPageName + ']]：' + wgULS('使用一键存档器', '使用一鍵存檔器') + '~~~~~'
+  const logMessage = '* [[' + spiHelperPageName + ']]：' + wgULS('使用一键存档器', '使用一鍵存檔器') + '。~~~~~'
   if (spiHelperSettings.log) {
     spiHelperLog(logMessage)
   }
@@ -1095,7 +1095,7 @@ async function spiHelperPerformActions () {
   } else {
     logMessage += wgULS('（完整章节）', '（完整章節）')
   }
-  logMessage += ' ~~~~~'
+  logMessage += '~~~~~'
 
   if (spiHelperActionsSelected.Link) {
     $('#linkViewResults', document).show()
@@ -1584,7 +1584,7 @@ async function spiHelperPerformActions () {
         let message = '=== Global lock for ' + heading + ' ==='
         message += '\n{{status}}'
         message += '\n' + lockTemplate
-        message += '\nSockpuppet(s) found in zhwiki sockpuppet investigation, see [[' + spiHelperInterwikiPrefix + spiHelperPageName + ']]. ' + lockComment + ' ~~~~'
+        message += '\nSockpuppet(s) found in zhwiki sockpuppet investigation, see [[' + spiHelperInterwikiPrefix + spiHelperPageName + ']]. ' + lockComment + ' --~~~~'
 
         // Write lock request to [[meta:Steward requests/Global]]
         let srgText = await spiHelperGetPageText('meta:Steward requests/Global', false)
@@ -1604,7 +1604,7 @@ async function spiHelperPerformActions () {
       sectionText += '\n----<!-- 所有留言請放在此行以上。 -->'
     }
     if (!/~~~~/.test(comment)) {
-      comment += ' ~~~~'
+      comment += '--~~~~'
     }
     // Clerks and admins post in the admin section
     if (spiHelperIsClerk() || spiHelperIsAdmin()) {
@@ -3378,7 +3378,7 @@ async function spiHelperAddLink () {
     return spiHelperInit()
   })
   if (mw.config.get('wgCategories').includes('傀儡調查－等候存檔') && spiHelperIsClerk()) {
-    const oneClickArchiveLink = mw.util.addPortletLink('p-cactions', '#', 'SPI-Archive', 'ca-spiHelperArchive')
+    const oneClickArchiveLink = mw.util.addPortletLink('p-cactions', '#', wgULS('傀儡调查-存档', '傀儡調查-存檔'), 'ca-spiHelperArchive')
     $(oneClickArchiveLink).one('click', (e) => {
       e.preventDefault()
       return spiHelperOneClickArchive()

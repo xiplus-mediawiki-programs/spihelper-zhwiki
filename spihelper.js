@@ -1874,7 +1874,7 @@ async function spiHelperArchiveCaseSection (sectionId) {
   }
   archivetext += '\n' + newarchivetext
   const archiveSuccess = await spiHelperEditPage(spiHelperGetArchiveName(), archivetext,
-    'Archiving case section from [[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]',
+    wgULS('从', '從') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('存档案件章节', '存檔案件章節'),
     false, spiHelperSettings.watchArchive, spiHelperSettings.watchArchiveExpiry)
 
   if (!archiveSuccess) {
@@ -2385,7 +2385,7 @@ async function spiHelperMovePage (sourcePage, destPage, summary, ignoreWarnings)
   const $sourceLink = $('<a>').attr('href', mw.util.getUrl(sourcePage)).attr('title', sourcePage).text(sourcePage)
   const $destLink = $('<a>').attr('href', mw.util.getUrl(destPage)).attr('title', destPage).text(destPage)
 
-  $statusLine.html('Moving ' + $sourceLink.prop('outerHTML') + ' to ' + $destLink.prop('outerHTML'))
+  $statusLine.html(wgULS('移动', '移動') + $sourceLink.prop('outerHTML') + '到' + $destLink.prop('outerHTML'))
 
   try {
     await api.postWithToken('csrf', {

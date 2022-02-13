@@ -246,7 +246,7 @@ const spiHelperClerkStatusRegex = /{{(CURequest|awaitingadmin|clerk ?request|(?:
 
 const spiHelperSockSectionWithNewlineRegex = /====\s*疑似傀儡\s*====\n*/i
 
-const spiHelperAdminSectionWithPrecedingNewlinesRegex = /\n*\s*====\s*調查助手、監管員、巡邏管理員的意見\s*====\s*/i
+const spiHelperAdminSectionWithPrecedingNewlinesRegex = /\n*\s*====\s*調查助理、監管員、巡檢管理員的意見\s*====\s*/i
 
 const spiHelperCUBlockRegex = /{{(checkuserblock(-account|-wide)?|checkuser block)}}/i
 
@@ -1614,7 +1614,7 @@ async function spiHelperPerformActions () {
       sectionText = sectionText.replace(/\n*----(?!(\n|.)*----)/, '\n' + comment + '\n----')
     } else { // Everyone else posts in the "other users" section
       sectionText = sectionText.replace(spiHelperAdminSectionWithPrecedingNewlinesRegex,
-        '\n' + comment + '\n====調查助手、監管員、巡邏管理員的意見====\n')
+        '\n' + comment + '\n==== 調查助理、監管員、巡檢管理員的意見 ====\n')
     }
     if (editsummary) {
       editsummary += '，留言'

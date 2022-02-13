@@ -1023,8 +1023,6 @@ async function spiHelperPerformActions () {
             noticetype = 'sock'
           }
 
-          // const currentBlock = await spiHelperGetUserBlockSettings(username)
-
           /** @type {BlockEntry} */
           const item = {
             username: username,

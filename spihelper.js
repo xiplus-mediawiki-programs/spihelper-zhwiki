@@ -667,10 +667,10 @@ async function spiHelperGenerateForm () {
     } else { // I guess it's okay for anyone to have this option
       selectOpts.push({ label: wgULS('搁置', '擱置'), value: 'hold', selected: false })
     }
-    selectOpts.push({ label: '要求助理操作', value: 'clerk', selected: false })
+    selectOpts.push({ label: wgULS('请求助理协助', '請求助理協助'), value: 'clerk', selected: false })
     // I think this is only useful for non-admin clerks to ask admins to do stuff
     if (!spiHelperIsAdmin() && spiHelperIsClerk()) {
-      selectOpts.push({ label: '要求管理操作', value: 'admin', selected: false })
+      selectOpts.push({ label: wgULS('请求管理员协助', '請求管理員協助'), value: 'admin', selected: false })
     }
     // Generate the case action options
     spiHelperGenerateSelect('spiHelper_CaseAction', selectOpts)
@@ -1160,26 +1160,26 @@ async function spiHelperPerformActions () {
           editsummary = wgULS('重开', '重開')
           break
         case 'open':
-          editsummary = wgULS('标记为开启', '標記為開啟')
+          editsummary = wgULS('待处理', '待處理')
           break
         case 'CUrequest':
-          editsummary = wgULS('加入CU请求', '加入CU請求')
+          editsummary = wgULS('请求查核', '請求查核')
           break
         case 'admin':
-          editsummary = '要求管理操作'
+          editsummary = wgULS('请求管理员协助', '請求管理員協助')
           break
         case 'clerk':
-          editsummary = '要求助理操作'
+          editsummary = wgULS('请求助理协助', '請求助理協助')
           break
         case 'selfendorse':
           newCaseStatus = 'endorse'
-          editsummary = wgULS('加入CU请求（自我批准要求查核员关注）', '加入CU請求（自我批准要求查核員關注）')
+          editsummary = wgULS('请求查核并自我批准', '請求查核並自我批准')
           break
         case 'checked':
-          editsummary = wgULS('标记为已检查', '標記為已檢查')
+          editsummary = '完成查核'
           break
         case 'inprogress':
-          editsummary = wgULS('标记为处理中', '標記為處理中')
+          editsummary = wgULS('处理中', '處理中')
           break
         case 'decline':
           editsummary = wgULS('拒绝查核', '拒絕查核')
@@ -1188,23 +1188,23 @@ async function spiHelperPerformActions () {
           editsummary = wgULS('查核员拒绝进行查核', '查核員拒絕進行查核')
           break
         case 'endorse':
-          editsummary = wgULS('批准要求查核员关注', '批准要求查核員關注')
+          editsummary = '批准查核'
           break
         case 'cuendorse':
-          editsummary = wgULS('查核员批准了要求查核员关注', '查核員批准了要求查核員關注')
+          editsummary = wgULS('查核员批准查核', '查核員批准查核')
           break
         case 'moreinfo': // Intentional fallthrough
         case 'cumoreinfo':
           editsummary = wgULS('需要更多信息', '需要更多資訊')
           break
         case 'relist':
-          editsummary = '要求再次查核'
+          editsummary = '重新提出查核'
           break
         case 'hold':
-          editsummary = wgULS('搁置案件', '擱置案件')
+          editsummary = wgULS('搁置', '擱置')
           break
         case 'cuhold':
-          editsummary = wgULS('搁置CU', '擱置CU')
+          editsummary = wgULS('查核员搁置', '查核員擱置')
           break
         case 'noaction':
           // Do nothing

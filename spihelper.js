@@ -713,7 +713,7 @@ async function spiHelperGenerateForm () {
       spiHelperNoteTemplates.push({ label: wgULS('管理员备注', '管理員備註'), selected: false, value: 'adminnote' })
     }
     if (spiHelperIsCheckuser()) {
-      spiHelperNoteTemplates.push({ label: wgULS('查核员备注', '查核員備註'), selected: false, value: 'cunote' })
+      // spiHelperNoteTemplates.push({ label: wgULS('查核员备注', '查核員備註'), selected: false, value: 'cunote' })
     }
     spiHelperNoteTemplates.push({ label: wgULS('备注', '備註'), selected: false, value: 'takenote' })
 

@@ -618,7 +618,7 @@ async function spiHelperGenerateForm () {
       selectOpts.push({ label: wgULS('待处理', '待處理'), value: 'open', selected: false })
     }
     if (spiHelperIsCheckuser()) {
-      // selectOpts.push({ label: wgULS('进行中', '進行中'), value: 'inprogress', selected: false })
+      selectOpts.push({ label: wgULS('进行中', '進行中'), value: 'inprogress', selected: false })
     }
     if (spiHelperIsClerk() || spiHelperIsAdmin()) {
       selectOpts.push({ label: wgULS('需要更多信息', '需要更多資訊'), value: 'moreinfo', selected: false })
@@ -639,20 +639,19 @@ async function spiHelperGenerateForm () {
       selectOpts.push({ label: '助理批准查核', value: 'endorse', selected: false })
       // Switch the decline option depending on whether the user is a checkuser
       if (spiHelperIsCheckuser()) {
-        // selectOpts.push({ label: wgULS('以查核员身份批准', '以查核員身分批准'), value: 'cuendorse', selected: false })
+        selectOpts.push({ label: wgULS('以查核员身份批准', '以查核員身分批准'), value: 'cuendorse', selected: false })
       }
       if (spiHelperIsCheckuser()) {
-        // selectOpts.push({ label: wgULS('拒绝查核', '拒絕查核'), value: 'cudecline', selected: false })
-      } else {
-        selectOpts.push({ label: wgULS('拒绝查核', '拒絕查核'), value: 'decline', selected: false })
+        selectOpts.push({ label: wgULS('查核员拒绝查核', '查核員拒絕查核'), value: 'cudecline', selected: false })
       }
+      selectOpts.push({ label: wgULS('拒绝查核', '拒絕查核'), value: 'decline', selected: false })
       selectOpts.push({ label: wgULS('需要更多信息以决定是否查核', '需要更多資訊以決定是否查核'), value: 'cumoreinfo', selected: false })
     } else if (cuEndorsed && spiHelperIsCheckuser()) {
       // Let checkusers decline endorsed cases
       if (spiHelperIsCheckuser()) {
-        // selectOpts.push({ label: wgULS('拒绝查核', '拒絕查核'), value: 'cudecline', selected: false })
+        selectOpts.push({ label: wgULS('查核员拒绝查核', '查核員拒絕查核'), value: 'cudecline', selected: false })
       }
-      selectOpts.push({ label: wgULS('需要更多信息以决定是否查核', '需要更多資訊以決定是否查核'), value: 'cumoreinfo', selected: false })
+      selectOpts.push({ label: wgULS('查核员要求更多信息以决定是否查核', '查核員要求更多資訊以決定是否查核'), value: 'cumoreinfo', selected: false })
     }
     // This is mostly a CU function, but let's let clerks and admins set it
     //  in case the CU forgot (or in case we're un-closing))
@@ -664,9 +663,9 @@ async function spiHelperGenerateForm () {
     }
     if (spiHelperIsCheckuser()) {
       selectOpts.push({ label: wgULS('查核员搁置', '查核員擱置'), value: 'cuhold', selected: false })
-    } else { // I guess it's okay for anyone to have this option
-      selectOpts.push({ label: wgULS('搁置', '擱置'), value: 'hold', selected: false })
     }
+    // I guess it's okay for anyone to have this option
+    selectOpts.push({ label: wgULS('搁置', '擱置'), value: 'hold', selected: false })
     selectOpts.push({ label: wgULS('请求助理协助', '請求助理協助'), value: 'clerk', selected: false })
     // I think this is only useful for non-admin clerks to ask admins to do stuff
     if (!spiHelperIsAdmin() && spiHelperIsClerk()) {
@@ -714,7 +713,7 @@ async function spiHelperGenerateForm () {
       spiHelperNoteTemplates.push({ label: wgULS('管理员备注', '管理員備註'), selected: false, value: 'adminnote' })
     }
     if (spiHelperIsCheckuser()) {
-      spiHelperNoteTemplates.push({ label: wgULS('CU备注', 'CU備註'), selected: false, value: 'cunote' })
+      spiHelperNoteTemplates.push({ label: wgULS('查核员备注', '查核員備註'), selected: false, value: 'cunote' })
     }
     spiHelperNoteTemplates.push({ label: wgULS('备注', '備註'), selected: false, value: 'takenote' })
 
@@ -3469,7 +3468,8 @@ function spiHelperIsCheckuser () {
   if (spiHelperSettings.debugForceCheckuserState !== null) {
     return spiHelperSettings.debugForceCheckuserState
   }
-  return mw.config.get('wgUserGroups').includes('checkuser') || spiHelperSettings.clerk // Allow clerk to use CU templates
+  return mw.config.get('wgUserGroups').includes('checkuser') ||
+    spiHelperSettings.clerk // Allow clerk to use CU functions when there is no local CU
 }
 
 /**

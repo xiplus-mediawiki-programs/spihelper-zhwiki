@@ -543,7 +543,7 @@ const spiHelperActionViewHTML = `
     </span>
     <div>
       <label for="spiHelper_CommentText">留言：</label>
-      <textarea rows="3" cols="80" id="spiHelper_CommentText">*</textarea>
+      <textarea rows="3" cols="80" id="spiHelper_CommentText">* </textarea>
       <div><a id="spiHelper_previewLink">` + wgULS('预览', '預覽') + `</a></div>
     </div>
     <div class="spihelper-previewbox" id="spiHelper_previewBox" hidden></div>
@@ -3310,7 +3310,7 @@ function spiHelperInsertNote (source) {
  */
 function spiHelperCaseActionUpdated (source) {
   const $textBox = $('#spiHelper_CommentText', document)
-  const oldText = $textBox.val().toString().trim()
+  let newText = $textBox.val().toString().trim()
   let newTemplate = ''
   switch (source.val()) {
     case 'CUrequest':
@@ -3352,16 +3352,17 @@ function spiHelperCaseActionUpdated (source) {
       newTemplate = '{{onhold}}'
       break
   }
-  if (spiHelperClerkStatusRegex.test(oldText)) {
-    $textBox.val(oldText.replace(spiHelperClerkStatusRegex, newTemplate))
-    if (!newTemplate) { // If the new template is empty, get rid of the stray ' - '
-      $textBox.val(oldText.replace(/^ - /, ''))
+  if (spiHelperClerkStatusRegex.test(newText)) {
+    newText = newText.replace(spiHelperClerkStatusRegex, newTemplate)
+    if (!newTemplate) { // If the new template is empty, get rid of the stray '：'
+      newText = newText.replace(/^(\s*\*\s*)?：/, '$1')
     }
   } else if (newTemplate) {
     // Don't try to insert if the "new template" is empty
     // Also remove the leading *
-    $textBox.val('* ' + newTemplate + ' - ' + oldText.replace(/^\s*\*\s*/, ''))
+    newText = '* ' + newTemplate + '：' + newText.replace(/^\s*\*\s*/, '')
   }
+  $textBox.val(newText)
 }
 
 /**

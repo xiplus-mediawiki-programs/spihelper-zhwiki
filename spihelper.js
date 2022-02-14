@@ -996,7 +996,7 @@ async function spiHelperPerformActions () {
     spiHelperArchiveNoticeParams.notalk = $('#spiHelper_spiMgmt_notalk', $actionView).prop('checked')
   }
   if (spiHelperSectionId && !spiHelperIsThisPageAnArchive) {
-    comment = $('#spiHelper_CommentText', $actionView).val().toString()
+    comment = $('#spiHelper_CommentText', $actionView).val().toString().trim()
   }
   if (spiHelperActionsSelected.Block) {
     if (spiHelperIsCheckuser()) {
@@ -1304,7 +1304,6 @@ async function spiHelperPerformActions () {
           blockedList += '、'
         }
         blockedList += '{{unping|' + blockEntry.username + '}}'
-        console.log('in blockedList', blockedList)
 
         if (isIPRange) {
           // There isn't really a talk page for an IP range, so return here before we reach that section
@@ -1351,11 +1350,9 @@ async function spiHelperPerformActions () {
         }
       })
     }
-    console.log('out blockedList', blockedList)
     if (blockedList) {
       logMessage += '\n** ' + wgULS('已封禁', '已封鎖') + blockedList
     }
-    console.log(logMessage)
 
     let tagged = ''
     if (sockmaster) {
@@ -2092,7 +2089,7 @@ async function spiHelperMoveCaseSection (target, sectionId) {
  *
  */
 async function spiHelperPreviewText () {
-  const inputText = $('#spiHelper_CommentText', document).val().toString()
+  const inputText = $('#spiHelper_CommentText', document).val().toString().trim()
   const renderedText = await spiHelperRenderText(spiHelperPageName, inputText)
   // Fill the preview box with the new text
   const $previewBox = $('#spiHelper_previewBox', document)
@@ -3296,7 +3293,7 @@ function spiHelperInsertTextFromSelect (source, pos = null) {
 function spiHelperInsertNote (source) {
   'use strict'
   const $textBox = $('#spiHelper_CommentText', document)
-  let newText = $textBox.val().toString()
+  let newText = $textBox.val().toString().trim()
   // Match the start of the line, optionally including a '*' with or without whitespace around it,
   // optionally including a template which contains the string "note"
   newText = newText.replace(/^(\s*\*\s*)?({{[\w\s]*note[\w\s]*}}\s*)?/i, '* {{' + source.val() + '}} ')
@@ -3313,7 +3310,7 @@ function spiHelperInsertNote (source) {
  */
 function spiHelperCaseActionUpdated (source) {
   const $textBox = $('#spiHelper_CommentText', document)
-  const oldText = $textBox.val().toString()
+  const oldText = $textBox.val().toString().trim()
   let newTemplate = ''
   switch (source.val()) {
     case 'CUrequest':
@@ -3363,7 +3360,7 @@ function spiHelperCaseActionUpdated (source) {
   } else if (newTemplate) {
     // Don't try to insert if the "new template" is empty
     // Also remove the leading *
-    $textBox.val('*' + newTemplate + ' - ' + oldText.replace(/^\s*\*\s*/, ''))
+    $textBox.val('* ' + newTemplate + ' - ' + oldText.replace(/^\s*\*\s*/, ''))
   }
 }
 

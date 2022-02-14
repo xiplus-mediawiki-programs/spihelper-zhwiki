@@ -188,20 +188,20 @@ const spiHelperActiveOperations = new Map()
  */
 const spiHelperTagOptions = [
   { label: wgULS('无', '無'), selected: true, value: '' },
-  { label: wgULS('确认为傀儡', '確認為傀儡'), value: 'blocked', selected: false },
-  // { label: 'Proven sock', value: 'proven', selected: false },
-  { label: wgULS('CU确认为傀儡', 'CU確認為傀儡'), value: 'confirmed', selected: false },
+  { label: wgULS('认为是傀儡', '認為是傀儡'), value: 'blocked', selected: false },
+  { label: wgULS('确认为傀儡', '確認為傀儡'), value: 'proven', selected: false },
+  { label: wgULS('查核确认为傀儡', '查核確認為傀儡'), value: 'confirmed', selected: false },
   { label: wgULS('确认为傀儡主账户', '確認為傀儡主帳號'), value: 'master', selected: false },
-  { label: wgULS('CU确认为傀儡主账户', 'CU確認為傀儡主帳號'), value: 'sockmasterchecked', selected: false }
+  { label: wgULS('查核确认为傀儡主账户', '查核確認為傀儡主帳號'), value: 'sockmasterchecked', selected: false }
   // { label: '3X banned master', value: 'bannedmaster', selected: false }
 ]
 
 /** @type {SelectOption[]} List of possible selections for tagging a user's altmaster in the block/tag interface */
-const spiHelperAltMasterTagOptions = [
-  { label: wgULS('无', '無'), selected: true, value: '' },
-  { label: wgULS('确认为其他主账户的傀儡', '確認為其他主帳號的傀儡'), value: 'suspected', selected: false }
-  // { label: 'Proven alt master', value: 'proven', selected: false }
-]
+// const spiHelperAltMasterTagOptions = [
+//   { label: wgULS('无', '無'), selected: true, value: '' },
+//   { label: wgULS('认为是其他主账户的傀儡', '認為是其他主帳號的傀儡'), value: 'suspected', selected: false },
+//   { label: wgULS('确认为其他主账户的傀儡', '確認為其他主帳號的傀儡'), value: 'proven', selected: false }
+// ]
 
 /** @type {SelectOption[]} List of templates that CUs might insert */
 const spiHelperCUTemplates = [
@@ -263,7 +263,7 @@ const spiHelperHiddenCharNormRegex = /\u200E/g
 /* Other globals */
 
 /** @type{string} Advert to append to the edit summary of edits */
-const spihelperAdvert = '（使用[[:w:zh:User:Xiplus/js/spihelper|spihelper.js]]）'
+const spihelperAdvert = '（使用[[:w:zh:User:Xiplus/js/spihelper|spihelper]]）'
 
 /* Used by the link view */
 const spiHelperLinkViewURLFormats = {
@@ -503,7 +503,6 @@ const spiHelperActionViewHTML = `
         <th class="spiHelper_adminClass"><span title="` + wgULS('禁止编辑讨论页', '禁止編輯討論頁') + '" class="rt-commentedText spihelper-hovertext">' + wgULS('讨论', '討論') + `</span></th>
         <th class="spiHelper_adminClass"><span title="` + wgULS('禁止发送电子邮件', '禁止發送電子郵件') + '" class="rt-commentedText spihelper-hovertext">' + wgULS('邮件', '郵件') + `</span></th>
         <th>` + wgULS('标记', '標記') + `</th>
-        <th><span title="` + wgULS('以其他主账户标记傀儡', '以其他主帳號標記傀儡') + '" class="rt-commentedText spihelper-hovertext">' + wgULS('替代主账户', '替代主帳號') + `</span></th>
         <th><span title="` + wgULS('在Meta:SRG请求全域锁定', '在Meta:SRG請求全域鎖定') + '" class="rt-commentedText spihelper-hovertext">' + wgULS('锁定', '鎖定') + `</span></th>
       </tr>
       <tr style="border-bottom:2px solid black">
@@ -515,8 +514,6 @@ const spiHelperActionViewHTML = `
         <td class="spiHelper_adminClass"><input type="checkbox" id="spiHelper_block_tp"/></td>
         <td class="spiHelper_adminClass"><input type="checkbox" id="spiHelper_block_email"/></td>
         <td><select id="spiHelper_block_tag"></select></td>
-        <td><select id="spiHelper_block_tag_altmaster"></select></td>
-
         <td><input type="checkbox" name="spiHelper_block_lock_all" id="spiHelper_block_lock"/></td>
       </tr>
     </table>
@@ -839,10 +836,10 @@ async function spiHelperGenerateForm () {
       $('#spiHelper_block_tag', $actionView).on('change', function (e) {
         spiHelperSetAllTableColumnOpts($(e.target), 'block')
       })
-      spiHelperGenerateSelect('spiHelper_block_tag_altmaster', spiHelperAltMasterTagOptions)
-      $('#spiHelper_block_tag_altmaster', $actionView).on('change', function (e) {
-        spiHelperSetAllTableColumnOpts($(e.target), 'block')
-      })
+      // spiHelperGenerateSelect('spiHelper_block_tag_altmaster', spiHelperAltMasterTagOptions)
+      // $('#spiHelper_block_tag_altmaster', $actionView).on('change', function (e) {
+      //   spiHelperSetAllTableColumnOpts($(e.target), 'block')
+      // })
       $('#spiHelper_block_lock', $actionView).on('click', function (e) {
         spiHelperSetAllTableColumnOpts($(e.target), 'block')
       })
@@ -955,7 +952,7 @@ async function spiHelperOneClickArchive () {
   displayMessage('<ul id="spiHelper_status"/>')
   await spiHelperArchiveCase()
   await spiHelperPurgePage(spiHelperPageName)
-  const logMessage = '* [[' + spiHelperPageName + ']]：' + wgULS('使用一键存档器', '使用一鍵存檔器') + '~~~~~'
+  const logMessage = '* [[' + spiHelperPageName + ']]：' + wgULS('使用一键存档器', '使用一鍵存檔器') + '。~~~~~'
   if (spiHelperSettings.log) {
     spiHelperLog(logMessage)
   }
@@ -1046,7 +1043,7 @@ async function spiHelperPerformActions () {
           const item = {
             username: spiHelperNormalizeUsername($('#spiHelper_block_username' + i, $actionView).val().toString()),
             tag: $('#spiHelper_block_tag' + i, $actionView).val().toString(),
-            altmasterTag: $('#spiHelper_block_tag_altmaster' + i, $actionView).val().toString(),
+            altmasterTag: '', // $('#spiHelper_block_tag_altmaster' + i, $actionView).val().toString(),
             blocking: $('#spiHelper_block_doblock' + i, $actionView).prop('checked')
           }
           spiHelperTags.push(item)
@@ -1062,7 +1059,7 @@ async function spiHelperPerformActions () {
           const item = {
             username: spiHelperNormalizeUsername($('#spiHelper_block_username' + i, $actionView).val().toString()),
             tag: $('#spiHelper_block_tag' + i, $actionView).val().toString(),
-            altmasterTag: $('#spiHelper_block_tag_altmaster' + i, $actionView).val().toString(),
+            altmasterTag: '', // $('#spiHelper_block_tag_altmaster' + i, $actionView).val().toString(),
             blocking: false
           }
           spiHelperTags.push(item)
@@ -1095,7 +1092,7 @@ async function spiHelperPerformActions () {
   } else {
     logMessage += wgULS('（完整章节）', '（完整章節）')
   }
-  logMessage += ' ~~~~~'
+  logMessage += '~~~~~'
 
   if (spiHelperActionsSelected.Link) {
     $('#linkViewResults', document).show()
@@ -1472,8 +1469,6 @@ async function spiHelperPerformActions () {
 | 2 = ${tag}
 | locked = ${isLocked}
 | notblocked = ${isNotBlocked}
-| altmaster = ${altmasterName}
-| altmaster-status = ${altmasterTag}
 }}`
         }
         spiHelperEditPage('User:' + tagEntry.username, tagText, wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('加入傀儡标记', '加入傀儡標記'),
@@ -1488,42 +1483,42 @@ async function spiHelperPerformActions () {
       }
 
       if (checkAltConfirmedCat) {
-        const catname = 'Category:Wikipedia sockpuppets of ' + altmaster
+        const catname = 'Category:' + altmaster + '的維基用戶分身'
         const cattext = await spiHelperGetPageText(catname, false)
         // Empty text means the page doesn't exist - create it
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            'Creating sockpuppet category per [[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]',
+            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
       }
       if (checkAltSuspectedCat) {
-        const catname = 'Category:Suspected Wikipedia sockpuppets of ' + altmaster
+        const catname = 'Category:' + altmaster + '的維基用戶分身'
         const cattext = await spiHelperGetPageText(catname, false)
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            'Creating sockpuppet category per [[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]',
+            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
       }
       if (checkConfirmedCat) {
-        const catname = 'Category:Wikipedia sockpuppets of ' + sockmaster
+        const catname = 'Category:' + sockmaster + '的維基用戶分身'
         const cattext = await spiHelperGetPageText(catname, false)
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            'Creating sockpuppet category per [[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]',
+            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
       }
       if (checkSuspectedCat) {
-        const catname = 'Category:Suspected Wikipedia sockpuppets of ' + sockmaster
+        const catname = 'Category:' + sockmaster + '的維基用戶分身'
         const cattext = await spiHelperGetPageText(catname, false)
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            'Creating sockpuppet category per [[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]',
+            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
@@ -1584,7 +1579,7 @@ async function spiHelperPerformActions () {
         let message = '=== Global lock for ' + heading + ' ==='
         message += '\n{{status}}'
         message += '\n' + lockTemplate
-        message += '\nSockpuppet(s) found in zhwiki sockpuppet investigation, see [[' + spiHelperInterwikiPrefix + spiHelperPageName + ']]. ' + lockComment + ' ~~~~'
+        message += '\nSockpuppet(s) found in zhwiki sockpuppet investigation, see [[' + spiHelperInterwikiPrefix + spiHelperPageName + ']]. ' + lockComment + ' --~~~~'
 
         // Write lock request to [[meta:Steward requests/Global]]
         let srgText = await spiHelperGetPageText('meta:Steward requests/Global', false)
@@ -1604,7 +1599,7 @@ async function spiHelperPerformActions () {
       sectionText += '\n----<!-- 所有留言請放在此行以上。 -->'
     }
     if (!/~~~~/.test(comment)) {
-      comment += ' ~~~~'
+      comment += '--~~~~'
     }
     // Clerks and admins post in the admin section
     if (spiHelperIsClerk() || spiHelperIsAdmin()) {
@@ -3028,8 +3023,8 @@ async function spiHelperGenerateBlockTableLine (name, defaultblock, id) {
   $('<td>').append($('<select>').attr('id', 'spiHelper_block_tag' + id)
     .val(name)).appendTo($row)
   // Altmaster tag select
-  $('<td>').append($('<select>').attr('id', 'spiHelper_block_tag_altmaster' + id)
-    .val(name)).appendTo($row)
+  // $('<td>').append($('<select>').attr('id', 'spiHelper_block_tag_altmaster' + id)
+  //   .val(name)).appendTo($row)
   // Global lock (disabled for IPs since they can't be locked)
   $('<td>').append($('<input>').attr('type', 'checkbox').attr('id', 'spiHelper_block_lock' + id)
     .prop('disabled', mw.util.isIPAddress(name, true))).appendTo($row)
@@ -3037,7 +3032,7 @@ async function spiHelperGenerateBlockTableLine (name, defaultblock, id) {
 
   // Generate the select entries
   spiHelperGenerateSelect('spiHelper_block_tag' + id, spiHelperTagOptions)
-  spiHelperGenerateSelect('spiHelper_block_tag_altmaster' + id, spiHelperAltMasterTagOptions)
+  // spiHelperGenerateSelect('spiHelper_block_tag_altmaster' + id, spiHelperAltMasterTagOptions)
 }
 
 async function spiHelperGenerateLinksTableLine (username, id) {
@@ -3378,7 +3373,7 @@ async function spiHelperAddLink () {
     return spiHelperInit()
   })
   if (mw.config.get('wgCategories').includes('傀儡調查－等候存檔') && spiHelperIsClerk()) {
-    const oneClickArchiveLink = mw.util.addPortletLink('p-cactions', '#', 'SPI-Archive', 'ca-spiHelperArchive')
+    const oneClickArchiveLink = mw.util.addPortletLink('p-cactions', '#', wgULS('傀儡调查-存档', '傀儡調查-存檔'), 'ca-spiHelperArchive')
     $(oneClickArchiveLink).one('click', (e) => {
       e.preventDefault()
       return spiHelperOneClickArchive()

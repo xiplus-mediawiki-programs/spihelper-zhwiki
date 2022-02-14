@@ -411,7 +411,7 @@ const spiHelperActionViewHTML = `
     <select id="spiHelper_CaseAction"></select>
   </div>
   <div id="spiHelper_spiMgmtView">
-    <h4>` + wgULS('修改SPI设置', '修改SPI設定') + `</h4>
+    <h4>` + wgULS('修改SPI选项', '修改SPI選項') + `</h4>
     <ul>
       <li>
         <input type="checkbox" id="spiHelper_spiMgmt_crosswiki" />
@@ -611,56 +611,59 @@ async function spiHelperGenerateForm () {
     } else if (spiHelperIsClerk() && casestatus === 'clerk') {
       // Allow clerks to change the status from clerk to open.
       // Used when clerk assistance has been given and the case previously had the status 'open'.
-      selectOpts.push({ label: wgULS('标记为开放', '標記為開放'), value: 'open', selected: false })
+      selectOpts.push({ label: wgULS('待处理', '待處理'), value: 'open', selected: false })
     } else if (spiHelperIsAdmin() && casestatus === 'admin') {
       // Allow admins to change the status to open from admin
       // Used when admin assistance has been given to the non-admin clerk and the case previously had the status 'open'.
-      selectOpts.push({ label: wgULS('标记为开启', '標記為開啟'), value: 'open', selected: false })
+      selectOpts.push({ label: wgULS('待处理', '待處理'), value: 'open', selected: false })
     }
     if (spiHelperIsCheckuser()) {
-      selectOpts.push({ label: wgULS('标记为进行中', '標記為進行中'), value: 'inprogress', selected: false })
+      // selectOpts.push({ label: wgULS('进行中', '進行中'), value: 'inprogress', selected: false })
     }
     if (spiHelperIsClerk() || spiHelperIsAdmin()) {
-      selectOpts.push({ label: wgULS('要求更多信息', '要求更多資訊'), value: 'moreinfo', selected: false })
+      selectOpts.push({ label: wgULS('需要更多信息', '需要更多資訊'), value: 'moreinfo', selected: false })
     }
     if (canAddCURequest) {
       // Statuses only available if the case could be moved to "CU requested"
-      selectOpts.push({ label: '要求CU', value: 'CUrequest', selected: false })
+      selectOpts.push({ label: wgULS('请求查核', '請求查核'), value: 'CUrequest', selected: false })
       if (spiHelperIsClerk()) {
-        selectOpts.push({ label: wgULS('要求CU并自我批准', '要求CU並自我批准'), value: 'selfendorse', selected: false })
+        selectOpts.push({ label: wgULS('请求查核并自我批准', '請求查核並自我批准'), value: 'selfendorse', selected: false })
       }
     }
     // CU already requested
+    if (cuRequested) {
+      selectOpts.push({ label: wgULS('社群共识转交查核', '社群共識轉交查核'), value: 'condefer', selected: false })
+    }
     if (cuRequested && spiHelperIsClerk()) {
       // Statuses only available if CU has been requested, only clerks + CUs should use these
-      selectOpts.push({ label: wgULS('批准要求CU关注', '批准要求CU關注'), value: 'endorse', selected: false })
+      selectOpts.push({ label: '助理批准查核', value: 'endorse', selected: false })
       // Switch the decline option depending on whether the user is a checkuser
       if (spiHelperIsCheckuser()) {
-        selectOpts.push({ label: wgULS('以CU身份批准', '以CU身分批准'), value: 'cuendorse', selected: false })
+        // selectOpts.push({ label: wgULS('以查核员身份批准', '以查核員身分批准'), value: 'cuendorse', selected: false })
       }
       if (spiHelperIsCheckuser()) {
-        selectOpts.push({ label: wgULS('拒绝CU', '拒絕CU'), value: 'cudecline', selected: false })
+        // selectOpts.push({ label: wgULS('拒绝查核', '拒絕查核'), value: 'cudecline', selected: false })
       } else {
-        selectOpts.push({ label: wgULS('拒绝CU', '拒絕CU'), value: 'decline', selected: false })
+        selectOpts.push({ label: wgULS('拒绝查核', '拒絕查核'), value: 'decline', selected: false })
       }
-      selectOpts.push({ label: wgULS('要求更多信息以进行CU', '要求更多資訊以進行CU'), value: 'cumoreinfo', selected: false })
+      selectOpts.push({ label: wgULS('需要更多信息以决定是否查核', '需要更多資訊以決定是否查核'), value: 'cumoreinfo', selected: false })
     } else if (cuEndorsed && spiHelperIsCheckuser()) {
       // Let checkusers decline endorsed cases
       if (spiHelperIsCheckuser()) {
-        selectOpts.push({ label: wgULS('拒绝CU', '拒絕CU'), value: 'cudecline', selected: false })
+        // selectOpts.push({ label: wgULS('拒绝查核', '拒絕查核'), value: 'cudecline', selected: false })
       }
-      selectOpts.push({ label: wgULS('要求更多信息以进行CU', '要求更多資訊以進行CU'), value: 'cumoreinfo', selected: false })
+      selectOpts.push({ label: wgULS('需要更多信息以决定是否查核', '需要更多資訊以決定是否查核'), value: 'cumoreinfo', selected: false })
     }
     // This is mostly a CU function, but let's let clerks and admins set it
     //  in case the CU forgot (or in case we're un-closing))
     if (spiHelperIsAdmin() || spiHelperIsClerk()) {
-      selectOpts.push({ label: wgULS('标记为已经检查', '標記為已經檢查'), value: 'checked', selected: false })
+      selectOpts.push({ label: '完成查核', value: 'checked', selected: false })
     }
     if (spiHelperIsClerk() && cuCompleted) {
-      selectOpts.push({ label: '要求再次查核', value: 'relist', selected: false })
+      selectOpts.push({ label: '重新提出查核', value: 'relist', selected: false })
     }
     if (spiHelperIsCheckuser()) {
-      selectOpts.push({ label: wgULS('CU搁置', 'CU擱置'), value: 'cuhold', selected: false })
+      selectOpts.push({ label: wgULS('查核员搁置', '查核員擱置'), value: 'cuhold', selected: false })
     } else { // I guess it's okay for anyone to have this option
       selectOpts.push({ label: wgULS('搁置', '擱置'), value: 'hold', selected: false })
     }
@@ -1192,7 +1195,7 @@ async function spiHelperPerformActions () {
           break
         case 'moreinfo': // Intentional fallthrough
         case 'cumoreinfo':
-          editsummary = wgULS('要求更多信息', '要求更多資訊')
+          editsummary = wgULS('需要更多信息', '需要更多資訊')
           break
         case 'relist':
           editsummary = '要求再次查核'
@@ -2107,7 +2110,12 @@ async function spiHelperPreviewText () {
 function spiHelperGetAPI (title) {
   'use strict'
   if (title.startsWith('m:') || title.startsWith('meta:')) {
-    return new mw.ForeignApi('https://meta.wikimedia.org/w/api.php')
+    // Test on Beta Cluster
+    if (mw.config.get('wgServer').includes('beta.wmflabs.org')) {
+      return new mw.ForeignApi('https://meta.wikimedia.beta.wmflabs.org/w/api.php')
+    } else {
+      return new mw.ForeignApi('https://meta.wikimedia.org/w/api.php')
+    }
   } else {
     return new mw.Api()
   }

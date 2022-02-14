@@ -197,11 +197,11 @@ const spiHelperTagOptions = [
 ]
 
 /** @type {SelectOption[]} List of possible selections for tagging a user's altmaster in the block/tag interface */
-const spiHelperAltMasterTagOptions = [
-  { label: wgULS('无', '無'), selected: true, value: '' },
-  // { label: wgULS('认为是其他主账户的傀儡', '認為是其他主帳號的傀儡'), value: 'suspected', selected: false },
-  { label: wgULS('确认为其他主账户的傀儡', '確認為其他主帳號的傀儡'), value: 'proven', selected: false }
-]
+// const spiHelperAltMasterTagOptions = [
+//   { label: wgULS('无', '無'), selected: true, value: '' },
+//   { label: wgULS('认为是其他主账户的傀儡', '認為是其他主帳號的傀儡'), value: 'suspected', selected: false },
+//   { label: wgULS('确认为其他主账户的傀儡', '確認為其他主帳號的傀儡'), value: 'proven', selected: false }
+// ]
 
 /** @type {SelectOption[]} List of templates that CUs might insert */
 const spiHelperCUTemplates = [

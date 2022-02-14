@@ -636,10 +636,10 @@ async function spiHelperGenerateForm () {
     }
     if (cuRequested && spiHelperIsClerk()) {
       // Statuses only available if CU has been requested, only clerks + CUs should use these
-      selectOpts.push({ label: '助理批准查核', value: 'endorse', selected: false })
+      selectOpts.push({ label: '批准查核', value: 'endorse', selected: false })
       // Switch the decline option depending on whether the user is a checkuser
       if (spiHelperIsCheckuser()) {
-        selectOpts.push({ label: wgULS('以查核员身份批准', '以查核員身分批准'), value: 'cuendorse', selected: false })
+        selectOpts.push({ label: wgULS('查核员批准查核', '查核員批准查核'), value: 'cuendorse', selected: false })
       }
       if (spiHelperIsCheckuser()) {
         selectOpts.push({ label: wgULS('查核员拒绝查核', '查核員拒絕查核'), value: 'cudecline', selected: false })

@@ -242,7 +242,7 @@ const spiHelperCaseStatusRegex = /{{\s*SPI case status\s*\|?\s*(\S*?)\s*}}/i
 // Regex to match closed case statuses (close or closed)
 const spiHelperCaseClosedRegex = /^closed?$/i
 
-const spiHelperClerkStatusRegex = /{{(CURequest|awaitingadmin|clerk ?request|(?:self|requestand|cu)?endorse|inprogress|decline(?:-ip)?|moreinfo|relisted|onhold)}}/i
+const spiHelperClerkStatusRegex = /{{(CURequest|awaitingadmin|clerk ?request|(?:self|requestand|cu)?endorse|inprogress|clerk ?decline|decline-ip|moreinfo|relisted|onhold)}}/i
 
 const spiHelperSockSectionWithNewlineRegex = /====\s*疑似傀儡\s*====\n*/i
 
@@ -3328,7 +3328,7 @@ function spiHelperCaseActionUpdated (source) {
       newTemplate = '{{Inprogress}}'
       break
     case 'decline':
-      newTemplate = '{{Decline}}'
+      newTemplate = '{{Clerkdecline}}'
       break
     case 'cudecline':
       newTemplate = '{{Cudecline}}'

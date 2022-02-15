@@ -50,6 +50,7 @@ mw.loader.load('https://en.wikipedia.org/w/index.php?title=User:Timotheus_Canens
   * @property {boolean} xwiki Whether the crosswiki flag is set
   * @property {boolean} deny Whether the deny flag is set
   * @property {boolean} notalk Whether the notalk flag is set
+  * @property {string} lta LTA page name
   */
 
 // Globals
@@ -348,7 +349,7 @@ async function spiHelperInit () {
     const $warningText = $('#spiHelper_warning', $topView)
     $warningText.show()
     $warningText.append($('<b>').text(wgULS('找不到存档通知模板！自动将存档通知添加到页面。', '找不到存檔通知模板！自動將存檔通知添加到頁面。')))
-    const newArchiveNotice = spiHelperMakeNewArchiveNotice(spiHelperCaseName, { xwiki: false, deny: false, notalk: false })
+    const newArchiveNotice = spiHelperMakeNewArchiveNotice(spiHelperCaseName, { xwiki: false, deny: false, notalk: false, lta: '' })
     let pagetext = await spiHelperGetPageText(spiHelperPageName, false)
     if (spiHelperPriorCasesRegex.exec(pagetext) === null) {
       pagetext = '{{SPIpriorcases}}\n' + pagetext
@@ -424,6 +425,10 @@ const spiHelperActionViewHTML = `
       <li>
         <input type="checkbox" id="spiHelper_spiMgmt_notalk" />
         <label for="spiHelper_spiMgmt_notalk">` + wgULS('由于之前滥用过，傀儡应被禁止编辑讨论页及发送电子邮件', '由於之前濫用過，傀儡應被禁止編輯討論頁及發送電子郵件') + `</label>
+      </li>
+      <li>
+        <label for="spiHelper_moveTarget">` + wgULS('新的主账户用户名：', 'LTA頁面名稱：') + `</label>
+        <input type="text" name="spiHelper_spiMgmt_lta" id="spiHelper_spiMgmt_lta" />
       </li>
     </ul>
   </div>
@@ -685,10 +690,12 @@ async function spiHelperGenerateForm () {
     const $xwikiBox = $('#spiHelper_spiMgmt_crosswiki', $actionView)
     const $denyBox = $('#spiHelper_spiMgmt_deny', $actionView)
     const $notalkBox = $('#spiHelper_spiMgmt_notalk', $actionView)
+    const $ltaBox = $('#spiHelper_spiMgmt_lta', $actionView)
 
     $xwikiBox.prop('checked', spiHelperArchiveNoticeParams.xwiki)
     $denyBox.prop('checked', spiHelperArchiveNoticeParams.deny)
     $notalkBox.prop('checked', spiHelperArchiveNoticeParams.notalk)
+    $ltaBox.val(spiHelperArchiveNoticeParams.lta)
   } else {
     $('#spiHelper_spiMgmtView', $actionView).hide()
   }
@@ -993,6 +1000,7 @@ async function spiHelperPerformActions () {
     spiHelperArchiveNoticeParams.deny = $('#spiHelper_spiMgmt_deny', $actionView).prop('checked')
     spiHelperArchiveNoticeParams.xwiki = $('#spiHelper_spiMgmt_crosswiki', $actionView).prop('checked')
     spiHelperArchiveNoticeParams.notalk = $('#spiHelper_spiMgmt_notalk', $actionView).prop('checked')
+    spiHelperArchiveNoticeParams.lta = $('#spiHelper_spiMgmt_lta', $actionView).val().toString().trim()
   }
   if (spiHelperSectionId && !spiHelperIsThisPageAnArchive) {
     comment = $('#spiHelper_CommentText', $actionView).val().toString().trim()
@@ -3518,12 +3526,13 @@ async function spiHelperParseArchiveNotice (page) {
   const match = spiHelperArchiveNoticeRegex.exec(pagetext)
   if (match === null) {
     console.error('Missing archive notice')
-    return { username: null, deny: null, xwiki: null, notalk: null }
+    return { username: null, deny: null, xwiki: null, notalk: null, lta: '' }
   }
   const username = match[1]
   let deny = false
   let xwiki = false
   let notalk = false
+  let lta = ''
   if (match[2]) {
     for (const entry of match[2].split('|')) {
       if (!entry) {
@@ -3537,16 +3546,14 @@ async function spiHelperParseArchiveNotice (page) {
       }
       const key = splitEntry[0]
       const val = splitEntry[1]
-      if (val.toLowerCase() !== 'yes') {
-        // Only care if the value is 'yes'
-        continue
-      }
-      if (key.toLowerCase() === 'deny') {
+      if (key.toLowerCase() === 'deny' && val.toLowerCase() === 'yes') {
         deny = true
-      } else if (key.toLowerCase() === 'crosswiki') {
+      } else if (key.toLowerCase() === 'crosswiki' && val.toLowerCase() === 'yes') {
         xwiki = true
-      } else if (key.toLowerCase() === 'notalk') {
+      } else if (key.toLowerCase() === 'notalk' && val.toLowerCase() === 'yes') {
         notalk = true
+      } else if (key.toLowerCase() === 'lta') {
+        lta = val.trim()
       }
     }
   }
@@ -3555,7 +3562,8 @@ async function spiHelperParseArchiveNotice (page) {
     username: username,
     deny: deny,
     xwiki: xwiki,
-    notalk: notalk
+    notalk: notalk,
+    lta: lta
   }
 }
 
@@ -3576,6 +3584,9 @@ function spiHelperMakeNewArchiveNotice (username, archiveNoticeParams) {
   }
   if (archiveNoticeParams.notalk) {
     notice += '|notalk=yes'
+  }
+  if (archiveNoticeParams.lta) {
+    notice += '|LTA=' + archiveNoticeParams.lta
   }
   notice += '}}'
 

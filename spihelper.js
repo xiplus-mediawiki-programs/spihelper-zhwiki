@@ -427,7 +427,7 @@ const spiHelperActionViewHTML = `
         <label for="spiHelper_spiMgmt_notalk">` + wgULS('由于之前滥用过，傀儡应被禁止编辑讨论页及发送电子邮件', '由於之前濫用過，傀儡應被禁止編輯討論頁及發送電子郵件') + `</label>
       </li>
       <li>
-        <label for="spiHelper_moveTarget">` + wgULS('新的主账户用户名：', 'LTA頁面名稱：') + `</label>
+        <label for="spiHelper_moveTarget">` + wgULS('LTA页面名称：', 'LTA頁面名稱：') + `</label>
         <input type="text" name="spiHelper_spiMgmt_lta" id="spiHelper_spiMgmt_lta" />
       </li>
     </ul>
@@ -2027,7 +2027,7 @@ async function spiHelperMoveCase (target) {
     // Ignore warnings on the move, we're going to get one since we're stomping an existing page
     await spiHelperDeletePage(spiHelperPageName, wgULS('因案件合并而删除', '因案件合併而刪除'))
     await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('合并案件到', '合併案件到') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]', true)
-    await spiHelperUndeletePage(spiHelperPageName, wgULS('合并后撤销页面历史', '合併後復原頁面歷史'))
+    await spiHelperUndeletePage(spiHelperPageName, wgULS('合并后还原页面历史', '合併後還原頁面歷史'))
     if (archivesCopied) {
       // Create a redirect
       spiHelperEditPage(oldArchiveName, '#REDIRECT [[' + newArchiveName + ']]', wgULS('将旧存档重定向到新存档', '將舊存檔重新導向到新存檔'),

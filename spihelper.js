@@ -1760,7 +1760,7 @@ async function spiHelperPostRenameCleanup (oldCasePage) {
   newPageText = newPageText.replace(spiHelperArchiveNoticeRegex, '{{SPI archive notice|' + spiHelperCaseName + '}}')
   // We also want to add the previous master to the sock list
   // We use SOCK_SECTION_RE_WITH_NEWLINE to clean up any extraneous whitespace
-  newPageText = newPageText.replace(spiHelperSockSectionWithNewlineRegex, '====疑似傀儡====' +
+  newPageText = newPageText.replace(spiHelperSockSectionWithNewlineRegex, '==== 疑似傀儡 ====' +
     '\n* {{checkuser|1=' + oldCaseName + '|bullet=no}}（{{clerknote}}' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
   // Also remove the new master if they're in the sock list
   // This RE is kind of ugly. The idea is that we find everything from the level 4 heading
@@ -2392,7 +2392,7 @@ async function spiHelperMovePage (sourcePage, destPage, summary, ignoreWarnings)
   const $sourceLink = $('<a>').attr('href', mw.util.getUrl(sourcePage)).attr('title', sourcePage).text(sourcePage)
   const $destLink = $('<a>').attr('href', mw.util.getUrl(destPage)).attr('title', destPage).text(destPage)
 
-  $statusLine.html(wgULS('移动', '移動') + $sourceLink.prop('outerHTML') + '到' + $destLink.prop('outerHTML'))
+  $statusLine.html(wgULS('正在移动', '正在移動') + $sourceLink.prop('outerHTML') + '到' + $destLink.prop('outerHTML'))
 
   try {
     await api.postWithToken('csrf', {
@@ -2404,7 +2404,7 @@ async function spiHelperMovePage (sourcePage, destPage, summary, ignoreWarnings)
       movesubpages: true,
       ignoreWarnings: ignoreWarnings
     })
-    $statusLine.html(wgULS('移动', '移動') + $sourceLink.prop('outerHTML') + '到' + $destLink.prop('outerHTML'))
+    $statusLine.html(wgULS('已移动', '已移動') + $sourceLink.prop('outerHTML') + '到' + $destLink.prop('outerHTML'))
     spiHelperActiveOperations.set(activeOpKey, 'success')
   } catch (error) {
     $statusLine.addClass('spihelper-errortext').html('<b>' + wgULS('移动', '移動') + $sourceLink.prop('outerHTML') + '到' + $destLink.prop('outerHTML') + wgULS('失败', '失敗') + '</b>：' + error)
@@ -2423,7 +2423,7 @@ async function spiHelperPurgePage (title) {
   'use strict'
   const $statusLine = $('<li>').appendTo($('#spiHelper_status', document))
   const $link = $('<a>').attr('href', mw.util.getUrl(title)).attr('title', title).text(title)
-  $statusLine.html('清除' + $link.prop('outerHTML') + wgULS('的缓存', '的快取'))
+  $statusLine.html('正在清除' + $link.prop('outerHTML') + wgULS('的缓存', '的快取'))
   const strippedTitle = spiHelperStripXWikiPrefix(title)
 
   const api = spiHelperGetAPI(title)
@@ -2469,7 +2469,7 @@ async function spiHelperBlockUser (user, duration, reason, reblock, anononly, ac
   const userPage = 'User:' + user
   const $statusLine = $('<li>').appendTo($('#spiHelper_status', document))
   const $link = $('<a>').attr('href', mw.util.getUrl(userPage)).attr('title', userPage).text(user)
-  $statusLine.html(wgULS('封禁', '封鎖') + $link.prop('outerHTML'))
+  $statusLine.html(wgULS('正在封禁', '正在封鎖') + $link.prop('outerHTML'))
 
   // This is not something which should ever be cross-wiki
   const api = new mw.Api()
@@ -2714,7 +2714,7 @@ async function spiHelperUndeletePage (title, reason) {
 
   const $statusLine = $('<li>').appendTo($('#spiHelper_status', document))
   const $link = $('<a>').attr('href', mw.util.getUrl(title)).attr('title', title).text(title)
-  $statusLine.html(wgULS('恢复', '恢復') + $link.prop('outerHTML'))
+  $statusLine.html(wgULS('正在还原', '正在還原') + $link.prop('outerHTML'))
 
   const api = spiHelperGetAPI(title)
   try {
@@ -2723,10 +2723,10 @@ async function spiHelperUndeletePage (title, reason) {
       title: title,
       reason: reason
     })
-    $statusLine.html(wgULS('已恢复', '已恢復') + $link.prop('outerHTML'))
+    $statusLine.html(wgULS('已还原', '已還原') + $link.prop('outerHTML'))
     spiHelperActiveOperations.set(activeOpKey, 'success')
   } catch (error) {
-    $statusLine.addClass('spihelper-errortext').html('<b>' + wgULS('恢复', '恢復') + $link.prop('outerHTML') + wgULS('失败', '失敗') + '</b>：' + error)
+    $statusLine.addClass('spihelper-errortext').html('<b>' + wgULS('还原', '還原') + $link.prop('outerHTML') + wgULS('失败', '失敗') + '</b>：' + error)
     spiHelperActiveOperations.set(activeOpKey, 'failed')
   }
 }

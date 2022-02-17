@@ -1761,7 +1761,7 @@ async function spiHelperPostRenameCleanup (oldCasePage) {
   // We also want to add the previous master to the sock list
   // We use SOCK_SECTION_RE_WITH_NEWLINE to clean up any extraneous whitespace
   newPageText = newPageText.replace(spiHelperSockSectionWithNewlineRegex, '==== 疑似傀儡 ====' +
-    '\n* {{checkuser|1=' + oldCaseName + '|bullet=no}}（{{clerknote}}' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
+    '\n* {{checkuser|1=' + oldCaseName + '|bullet=no}}（{{clerknote}}：' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
   // Also remove the new master if they're in the sock list
   // This RE is kind of ugly. The idea is that we find everything from the level 4 heading
   // ending with "sockpuppets" to the level 4 heading beginning with <big> and pull the checkuser
@@ -2073,7 +2073,7 @@ async function spiHelperMoveCaseSection (target, sectionId) {
   // Have to do this transform before concatenating with targetPageText so that the
   // "originally filed" goes in the correct section
   sectionText = sectionText.replace(spiHelperSockSectionWithNewlineRegex, '====疑似傀儡====' +
-  '\n* {{checkuser|1=' + spiHelperCaseName + '|bullet=no}}（{{clerknote}}' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
+  '\n* {{checkuser|1=' + spiHelperCaseName + '|bullet=no}}（{{clerknote}}：' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
 
   if (targetPageText === '') {
     // Pre-load the split target with the SPI templates if it's empty
@@ -3303,7 +3303,7 @@ function spiHelperInsertNote (source) {
   let newText = $textBox.val().toString().trim()
   // Match the start of the line, optionally including a '*' with or without whitespace around it,
   // optionally including a template which contains the string "note"
-  newText = newText.replace(/^(\s*\*\s*)?({{[\w\s]*note[\w\s]*}}\s*)?/i, '* {{' + source.val() + '}} ')
+  newText = newText.replace(/^(\s*\*\s*)?({{[\w\s]*note[\w\s]*}}\s*：?\s*)?/i, '* {{' + source.val() + '}}：')
   $textBox.val(newText)
 
   // Force the selected element to reset its selection to 0

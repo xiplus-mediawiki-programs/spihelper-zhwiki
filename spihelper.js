@@ -1453,10 +1453,9 @@ async function spiHelperPerformActions () {
         if (isMaster) {
           // Not doing SPI or LTA fields for now - those auto-detect right now
           // and I'm not sure if setting them to empty would mess that up
-          tagText += `{{sockpuppeteer
+          tagText += `{{Sockpuppeteer
 | 1 = ${tag}
 | checked = ${checked}
-| locked = ${isLocked}
 }}`
         }
         // Not if-else because we tag something as both sock and master if they're a
@@ -1471,7 +1470,7 @@ async function spiHelperPerformActions () {
             altmasterTag = ''
             tagText += '\n'
           }
-          tagText += `{{sockpuppet
+          tagText += `{{Sockpuppet
 | 1 = ${sockmasterName}
 | 2 = ${tag}
 | locked = ${isLocked}

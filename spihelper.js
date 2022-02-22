@@ -754,7 +754,7 @@ async function spiHelperGenerateForm () {
   }
   if (spiHelperActionsSelected.Block || spiHelperActionsSelected.Link) {
     // eslint-disable-next-line no-useless-escape
-    const checkuserRegex = /{{\s*check(?:user|ip)\s*\|\s*(?:1=)?\s*([^\|}]*?)\s*(?:\|master name\s*=\s*.*)?}}/gi
+    const checkuserRegex = /{{\s*(?:checkuser|checkip|CUresult)\s*\|\s*(?:1=)?\s*([^\|}]*?)\s*(?:\|master name\s*=\s*.*)?}}/gi
     const results = pagetext.match(checkuserRegex)
     const likelyusers = []
     const likelyips = []
@@ -788,9 +788,10 @@ async function spiHelperGenerateForm () {
             username = spiHelperNormalizeUsername(splitArgument.slice(1).join('='))
           }
           if (username !== '') {
-            if (mw.util.isIPAddress(username, true) && !likelyips.includes(username)) {
-              likelyusers.push(username)
-            } else if (!likelyusers.includes(username)) {
+            const isIP = mw.util.isIPAddress(username, true)
+            if (isIP && !likelyips.includes(username)) {
+              likelyips.push(username)
+            } else if (!isIP && !likelyusers.includes(username)) {
               likelyusers.push(username)
             }
           }

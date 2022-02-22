@@ -760,7 +760,6 @@ async function spiHelperGenerateForm () {
     const likelyips = []
     const possibleusers = []
     const possibleips = []
-    likelyusers.push(spiHelperCaseName)
     if (results) {
       for (let i = 0; i < results.length; i++) {
         const username = spiHelperNormalizeUsername(results[i].replace(checkuserRegex, '$1'))

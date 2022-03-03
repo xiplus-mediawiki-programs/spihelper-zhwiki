@@ -533,6 +533,9 @@ const spiHelperActionViewHTML = `
     <h4 id="spiHelper_moveHeader">` + wgULS('移动章节', '移動章節') + `</h4>
     <label for="spiHelper_moveTarget">` + wgULS('新的主账户用户名：', '新的主帳號使用者名稱：') + `</label>
     <input type="text" name="spiHelper_moveTarget" id="spiHelper_moveTarget" />
+    <br />
+    <input type="checkbox" checked="checked" id="spiHelper_AddOldName" />
+    <label for="spiHelper_AddOldName">` + wgULS('加上原始案件名称', '加上原始案件名稱') + `</label>
   </div>
   <div id="spiHelper_archiveView">
     <h4>` + wgULS('存档案件', '存檔案件') + `</h4>
@@ -986,6 +989,7 @@ async function spiHelperPerformActions () {
   let cuBlockOnly = false
   let newCaseStatus = 'noaction'
   let renameTarget = ''
+  let renameAddOldName = false
 
   /** @type {boolean} */
   const blankTalk = $('#spiHelper_blanktalk', $actionView).prop('checked')
@@ -1086,6 +1090,7 @@ async function spiHelperPerformActions () {
   }
   if (spiHelperActionsSelected.Rename) {
     renameTarget = spiHelperNormalizeUsername($('#spiHelper_moveTarget', $actionView).val().toString())
+    renameAddOldName = $('#spiHelper_AddOldName', $actionView).prop('checked')
   }
   if (spiHelperActionsSelected.Archive) {
     spiHelperActionsSelected.Archive = $('#spiHelper_ArchiveCase', $actionView).prop('checked')
@@ -1676,11 +1681,11 @@ async function spiHelperPerformActions () {
     if (spiHelperSectionId === null) {
       // Option 1: we selected "All cases," this is a whole-case move/merge
       logMessage += '\n** ' + wgULS('移动/合并案件到', '移動/合併案件到') + renameTarget
-      await spiHelperMoveCase(renameTarget)
+      await spiHelperMoveCase(renameTarget, renameAddOldName)
     } else {
       // Option 2: this is a single-section case move or merge
       logMessage += '\n** ' + wgULS('移动章节到', '移動章節到') + renameTarget
-      await spiHelperMoveCaseSection(renameTarget, spiHelperSectionId)
+      await spiHelperMoveCaseSection(renameTarget, spiHelperSectionId, renameAddOldName)
     }
   }
   if (spiHelperSettings.log) {
@@ -1729,7 +1734,7 @@ async function spiHelperLog (logString) {
  *
  * @param {string} oldCasePage Title of the previous case page
  */
-async function spiHelperPostRenameCleanup (oldCasePage) {
+async function spiHelperPostRenameCleanup (oldCasePage, addOldName) {
   'use strict'
   const replacementArchiveNotice = '<noinclude>__TOC__</noinclude>\n' + spiHelperMakeNewArchiveNotice(spiHelperCaseName, spiHelperArchiveNoticeParams) + '\n{{SPIpriorcases}}'
   const oldCaseName = oldCasePage.replace(/Wikipedia:傀儡調查\/案件\//g, '')
@@ -1760,8 +1765,10 @@ async function spiHelperPostRenameCleanup (oldCasePage) {
   newPageText = newPageText.replace(spiHelperArchiveNoticeRegex, '{{SPI archive notice|' + spiHelperCaseName + '}}')
   // We also want to add the previous master to the sock list
   // We use SOCK_SECTION_RE_WITH_NEWLINE to clean up any extraneous whitespace
-  newPageText = newPageText.replace(spiHelperSockSectionWithNewlineRegex, '==== 疑似傀儡 ====' +
+  if (addOldName) {
+    newPageText = newPageText.replace(spiHelperSockSectionWithNewlineRegex, '==== 疑似傀儡 ====' +
     '\n* {{checkuser|1=' + oldCaseName + '|bullet=no}}（{{clerknote}}：' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
+  }
   // Also remove the new master if they're in the sock list
   // This RE is kind of ugly. The idea is that we find everything from the level 4 heading
   // ending with "sockpuppets" to the level 4 heading beginning with <big> and pull the checkuser
@@ -1898,7 +1905,7 @@ async function spiHelperArchiveCaseSection (sectionId) {
  * @param {string} target The username portion of the case this section should be merged into
  *                        (should have been normalized before getting passed in)
  */
-async function spiHelperMoveCase (target) {
+async function spiHelperMoveCase (target, addOldName) {
   // Move or merge an entire case
   // Normalize: change underscores to spaces
   // target = target
@@ -2047,7 +2054,7 @@ async function spiHelperMoveCase (target) {
     await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('移动案件到', '移動案件到') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]', false)
   }
   spiHelperStartingRevID = await spiHelperGetPageRev(spiHelperPageName)
-  await spiHelperPostRenameCleanup(oldPageName)
+  await spiHelperPostRenameCleanup(oldPageName, addOldName)
   if (targetPageText) {
     // If there was a page there before, also need to do post-merge cleanup
     await spiHelperPostMergeCleanup(targetPageText)
@@ -2063,7 +2070,7 @@ async function spiHelperMoveCase (target) {
  * @param {string} target The username portion of the case this section should be merged into (pre-normalized)
  * @param {!number} sectionId The section ID of this case that should be moved/merged
  */
-async function spiHelperMoveCaseSection (target, sectionId) {
+async function spiHelperMoveCaseSection (target, sectionId, addOldName) {
   // Move or merge a particular section of a case
   'use strict'
   const newPageName = spiHelperPageName.replace(spiHelperCaseName, target)
@@ -2072,8 +2079,10 @@ async function spiHelperMoveCaseSection (target, sectionId) {
   // SOCK_SECTION_RE_WITH_NEWLINE cleans up extraneous whitespace at the top of the section
   // Have to do this transform before concatenating with targetPageText so that the
   // "originally filed" goes in the correct section
-  sectionText = sectionText.replace(spiHelperSockSectionWithNewlineRegex, '====疑似傀儡====' +
-  '\n* {{checkuser|1=' + spiHelperCaseName + '|bullet=no}}（{{clerknote}}：' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
+  if (addOldName) {
+    sectionText = sectionText.replace(spiHelperSockSectionWithNewlineRegex, '==== 疑似傀儡 ====' +
+    '\n* {{checkuser|1=' + spiHelperCaseName + '|bullet=no}}（{{clerknote}}：' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
+  }
 
   if (targetPageText === '') {
     // Pre-load the split target with the SPI templates if it's empty
@@ -3182,7 +3191,7 @@ async function spiHelperSetCheckboxesBySection () {
     }
 
     // Change the label on the rename button
-    $('#spiHelper_moveLabel', $topView).html(wgULS('移动案件章节（', '移動案件章節（') + '<span title="' + wgULS('你可能想要移动整个案件', '你可能想要移動整個案件') +
+    $('#spiHelper_moveLabel', $topView).html(wgULS('移动案件章节（', '移動案件章節（') + '<span title="' + wgULS('你可能想要移动整个案件，', '你可能想要移動整個案件，') +
       wgULS('在下拉菜单选择所有章节而非特定日期', '在下拉式選單選擇所有章節而非特定日期') + '"' +
       'class="rt-commentedText spihelper-hovertext"><b>' + wgULS('请先阅读', '請先閱讀') + '</b></span>）')
   }

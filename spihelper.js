@@ -227,6 +227,7 @@ const spiHelperAdminTemplates = [
   { label: wgULS('管理员/助理模板', '管理員/助理模板'), selected: true, value: '', disabled: true },
   { label: '一望而知', selected: false, value: '{{duck}}' },
   { label: wgULS('明显的一望而知', '明顯的一望而知'), selected: false, value: '{{megaphoneduck}}' },
+  { label: wgULS('已封禁IP', '已封鎖IP'), selected: false, value: '{{IPblock}}' },
   { label: wgULS('已封禁、标记', '已封鎖、標記'), selected: false, value: '{{Blockedandtagged}}' },
   { label: wgULS('已封禁、不标记', '已封鎖、不標記'), selected: false, value: '{{Blockedwithouttags}}' },
   { label: wgULS('已封禁、等待标记', '已封鎖、等待標記'), selected: false, value: '{{sblock}}' },

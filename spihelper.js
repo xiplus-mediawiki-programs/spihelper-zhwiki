@@ -1281,7 +1281,7 @@ async function spiHelperPerformActions () {
         }
         const isIP = mw.util.isIPAddress(blockEntry.username, true)
         const isIPRange = isIP && !mw.util.isIPAddress(blockEntry.username, false)
-        let blockSummary = wgULS('滥用[[WP:SOCK|多个账户]]：请参见', '濫用[[WP:SOCK|多個帳號]]：請參見') + '[[' + spiHelperInterwikiPrefix + spiHelperPageName + ']]'
+        let blockSummary = wgULS('滥用[[WP:SOCK|多个账户]]：请参见', '濫用[[WP:SOCK|多個帳號]]：請參見') + '[[' + spiHelperPageName + ']]'
         if (spiHelperIsCheckuser() && cuBlock) {
           const cublockTemplate = isIP ? ('{{checkuserblock}}') : ('{{checkuserblock-account}}')
           if (cuBlockOnly) {
@@ -1360,7 +1360,7 @@ async function spiHelperPerformActions () {
           // Hardcode the watch setting to 'nochange' since we will have either watched or not watched based on the _boolean_
           // watchBlockedUser
           spiHelperEditPage('User talk:' + blockEntry.username,
-            newText, wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('发送傀儡封禁通知', '發送傀儡封鎖通知'), false, 'nochange')
+            newText, wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('发送傀儡封禁通知', '發送傀儡封鎖通知'), false, 'nochange')
         }
       })
     }
@@ -1484,7 +1484,7 @@ async function spiHelperPerformActions () {
 | notblocked = ${isNotBlocked}
 }}`
         }
-        spiHelperEditPage('User:' + tagEntry.username, tagText, wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('加入傀儡标记', '加入傀儡標記'),
+        spiHelperEditPage('User:' + tagEntry.username, tagText, wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('加入傀儡标记', '加入傀儡標記'),
           false, spiHelperSettings.watchTaggedUser, spiHelperSettings.watchTaggedUserExpiry)
         if (tagged) {
           tagged += '、'
@@ -1501,7 +1501,7 @@ async function spiHelperPerformActions () {
         // Empty text means the page doesn't exist - create it
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
+            wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
@@ -1511,7 +1511,7 @@ async function spiHelperPerformActions () {
         const cattext = await spiHelperGetPageText(catname, false)
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
+            wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
@@ -1521,7 +1521,7 @@ async function spiHelperPerformActions () {
         const cattext = await spiHelperGetPageText(catname, false)
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
+            wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
@@ -1531,7 +1531,7 @@ async function spiHelperPerformActions () {
         const cattext = await spiHelperGetPageText(catname, false)
         if (!cattext) {
           await spiHelperEditPage(catname, '{{sockpuppet category}}',
-            wgULS('根据', '根據') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
+            wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('创建傀儡分类', '建立傀儡分類'),
             true, spiHelperSettings.watchNewCats, spiHelperSettings.watchNewCatsExpiry)
           needsPurge = true
         }
@@ -1884,7 +1884,7 @@ async function spiHelperArchiveCaseSection (sectionId) {
   }
   archivetext += '\n' + newarchivetext
   const archiveSuccess = await spiHelperEditPage(spiHelperGetArchiveName(), archivetext,
-    wgULS('从', '從') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]' + wgULS('存档案件章节', '存檔案件章節'),
+    wgULS('从', '從') + '[[' + spiHelperPageName + ']]' + wgULS('存档案件章节', '存檔案件章節'),
     false, spiHelperSettings.watchArchive, spiHelperSettings.watchArchiveExpiry)
 
   if (!archiveSuccess) {
@@ -1894,7 +1894,7 @@ async function spiHelperArchiveCaseSection (sectionId) {
   }
 
   // Blank the section we archived
-  await spiHelperEditPage(spiHelperPageName, '', wgULS('存档案件章节到', '存檔案件章節到') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperGetArchiveName() + ']]',
+  await spiHelperEditPage(spiHelperPageName, '', wgULS('存档案件章节到', '存檔案件章節到') + '[[' + spiHelperGetArchiveName() + ']]',
     false, spiHelperSettings.watchCase, spiHelperSettings.watchCaseExpiry, spiHelperStartingRevID, sectionId)
   // Update to the latest revision ID
   spiHelperStartingRevID = await spiHelperGetPageRev(spiHelperPageName)
@@ -1962,7 +1962,7 @@ async function spiHelperMoveCase (target, addOldName) {
       // Strip leading newlines
       sourceArchiveText = sourceArchiveText.replace(/^\n*/, '')
       targetArchiveText += '\n' + sourceArchiveText
-      await spiHelperEditPage(newArchiveName, targetArchiveText, wgULS('从', '從') + '[[' + spiHelperGetInterwikiPrefix() + oldArchiveName + ']]' + wgULS('复制存档，参见页面历史', '複製存檔，參見頁面歷史'),
+      await spiHelperEditPage(newArchiveName, targetArchiveText, wgULS('从', '從') + '[[' + oldArchiveName + ']]' + wgULS('复制存档，参见页面历史', '複製存檔，參見頁面歷史'),
         false, spiHelperSettings.watchArchive, spiHelperSettings.watchArchiveExpiry)
       await spiHelperDeletePage(oldArchiveName, wgULS('删除已复制的存档', '刪除已複製的存檔'))
       archivesCopied = true
@@ -2034,7 +2034,7 @@ async function spiHelperMoveCase (target, addOldName) {
     }
     // Ignore warnings on the move, we're going to get one since we're stomping an existing page
     await spiHelperDeletePage(spiHelperPageName, wgULS('因案件合并而删除', '因案件合併而刪除'))
-    await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('合并案件到', '合併案件到') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]', true)
+    await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('合并案件到', '合併案件到') + '[[' + spiHelperPageName + ']]', true)
     await spiHelperUndeletePage(spiHelperPageName, wgULS('合并后还原页面历史', '合併後還原頁面歷史'))
     if (archivesCopied) {
       // Create a redirect
@@ -2052,7 +2052,7 @@ async function spiHelperMoveCase (target, addOldName) {
       spiHelperConfigurePendingChanges(oldPageName, newStabilisationSettings)
     }
   } else {
-    await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('移动案件到', '移動案件到') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]', false)
+    await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('移动案件到', '移動案件到') + '[[' + spiHelperPageName + ']]', false)
   }
   spiHelperStartingRevID = await spiHelperGetPageRev(spiHelperPageName)
   await spiHelperPostRenameCleanup(oldPageName, addOldName)
@@ -2092,10 +2092,10 @@ async function spiHelperMoveCaseSection (target, sectionId, addOldName) {
   targetPageText += '\n' + sectionText
 
   // Intentionally not async - doesn't matter when this edit finishes
-  spiHelperEditPage(newPageName, targetPageText, wgULS('移动案件章节自', '移動案件章節自') + '[[' + spiHelperGetInterwikiPrefix() + spiHelperPageName + ']]',
+  spiHelperEditPage(newPageName, targetPageText, wgULS('移动案件章节自', '移動案件章節自') + '[[' + spiHelperPageName + ']]',
     false, spiHelperSettings.watchCase, spiHelperSettings.watchCaseExpiry)
   // Blank the section we moved
-  await spiHelperEditPage(spiHelperPageName, '', wgULS('移动案件章节到', '移動案件章節到') + '[[' + spiHelperGetInterwikiPrefix() + newPageName + ']]',
+  await spiHelperEditPage(spiHelperPageName, '', wgULS('移动案件章节到', '移動案件章節到') + '[[' + newPageName + ']]',
     false, spiHelperSettings.watchCase, spiHelperSettings.watchCaseExpiry, spiHelperStartingRevID, sectionId)
   // Update to the latest revision ID
   spiHelperStartingRevID = await spiHelperGetPageRev(spiHelperPageName)

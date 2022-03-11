@@ -267,6 +267,12 @@ const spiHelperHiddenCharNormRegex = /\u200E/g
 /** @type{string} Advert to append to the edit summary of edits */
 const spihelperAdvert = '（使用[[:w:zh:User:Xiplus/js/spihelper|spihelper]]）'
 
+/** Protection for userpage of blocked users */
+const spiBlockedUserpageProtection = [
+  { type: 'edit', level: 'sysop', expiry: 'infinity' },
+  { type: 'move', level: 'sysop', expiry: 'infinity' }
+]
+
 /* Used by the link view */
 const spiHelperLinkViewURLFormats = {
   editorInteractionAnalyser: { baseurl: 'https://sigma.toolforge.org/editorinteract.py', appendToQueryString: '', userQueryStringKey: 'users', userQueryStringSeparator: '&', userQueryStringWrapper: '', multipleUserQueryStringKeys: true, name: 'Editor Interaction Anaylser' },
@@ -1484,8 +1490,10 @@ async function spiHelperPerformActions () {
 | notblocked = ${isNotBlocked}
 }}`
         }
-        spiHelperEditPage('User:' + tagEntry.username, tagText, wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('加入傀儡标记', '加入傀儡標記'),
+        await spiHelperEditPage('User:' + tagEntry.username, tagText, wgULS('根据', '根據') + '[[' + spiHelperPageName + ']]' + wgULS('加入傀儡标记', '加入傀儡標記'),
           false, spiHelperSettings.watchTaggedUser, spiHelperSettings.watchTaggedUserExpiry)
+        const summary = wgULS('被永久封禁的用户页', '被永久封鎖的使用者頁面')
+        await spiHelperProtectPage('User:' + tagEntry.username, spiBlockedUserpageProtection, summary)
         if (tagged) {
           tagged += '、'
         }
@@ -2044,8 +2052,9 @@ async function spiHelperMoveCase (target, addOldName) {
     // Now to protect both the oldPageName and newPageName with the protection settings in newProtectionDict, unless it is empty (i.e. no protection needed)
     // Also apply any pending changes needed (i.e. if newStabilisationSettings has a non-empty protection_level)
     if (newProtectionValues.length !== 0) {
-      spiHelperProtectPage(spiHelperPageName, newProtectionValues)
-      spiHelperProtectPage(oldPageName, newProtectionValues)
+      const summary = wgULS('在合并历史后恢复原先的保护', '在合併歷史後恢復原先的保護')
+      spiHelperProtectPage(spiHelperPageName, newProtectionValues, summary)
+      spiHelperProtectPage(oldPageName, newProtectionValues, summary)
     }
     if (newStabilisationSettings.protection_level !== '') {
       spiHelperConfigurePendingChanges(spiHelperPageName, newStabilisationSettings)
@@ -2865,7 +2874,7 @@ async function spiHelperGetStabilisationSettings (casePageName) {
   }
 }
 
-async function spiHelperProtectPage (casePageName, protections) {
+async function spiHelperProtectPage (casePageName, protections, summary) {
   // Only lookint to protect pages on enwiki
 
   const activeOpKey = 'protect_' + casePageName
@@ -2873,7 +2882,7 @@ async function spiHelperProtectPage (casePageName, protections) {
 
   const $statusLine = $('<li>').appendTo($('#spiHelper_status', document))
   const $link = $('<a>').attr('href', mw.util.getUrl(casePageName)).attr('title', casePageName).text(casePageName)
-  $statusLine.html(wgULS('保护', '保護') + $link.prop('outerHTML'))
+  $statusLine.html(wgULS('正在保护', '正在保護') + $link.prop('outerHTML'))
 
   const api = new mw.Api()
   try {
@@ -2890,12 +2899,12 @@ async function spiHelperProtectPage (casePageName, protections) {
     await api.postWithToken('csrf', {
       action: 'protect',
       format: 'json',
-      titles: casePageName,
+      title: casePageName,
       protections: protectlevelinfo,
       expiry: expiryinfo,
-      reason: wgULS('在合并历史后恢复原先的保护', '在合併歷史後恢復原先的保護')
+      reason: summary
     })
-    $statusLine.html('Protected ' + $link.prop('outerHTML'))
+    $statusLine.html(wgULS('已保护', '已保護') + $link.prop('outerHTML'))
     spiHelperActiveOperations.set(activeOpKey, 'success')
   } catch (error) {
     $statusLine.addClass('spihelper-errortext').html('<b>' + wgULS('保护', '保護') + $link.prop('outerHTML') + wgULS('失败', '失敗') + '</b>：' + error)

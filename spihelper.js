@@ -483,11 +483,11 @@ const spiHelperActionViewHTML = `
         </label>
       </li>
       <li class="spiHelper_adminClass">
-        <input type="checkbox" checked="checked" name="spiHelper_blocknoticemaster" id="spiHelper_blocknoticemaster" />
+        <input type="checkbox" name="spiHelper_blocknoticemaster" id="spiHelper_blocknoticemaster" />
         <label for="spiHelper_blocknoticemaster">` + wgULS('封禁主账户时发送讨论页通知', '封鎖主帳號時發送討論頁通知') + `</label>
       </li>
       <li class="spiHelper_adminClass">
-        <input type="checkbox" checked="checked" name="spiHelper_blocknoticesocks" id="spiHelper_blocknoticesocks" />
+        <input type="checkbox" name="spiHelper_blocknoticesocks" id="spiHelper_blocknoticesocks" />
         <label for="spiHelper_blocknoticesocks">` + wgULS('封禁傀儡时发送讨论页通知', '封鎖傀儡時發送討論頁通知') + `</label>
       </li>
       <li class="spiHelper_adminClass">

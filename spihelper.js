@@ -392,7 +392,7 @@ async function spiHelperInit () {
     $('<option>').val(s.index).text(s.line).appendTo($sectionSelect)
   }
   // All-sections selector...deliberately at the bottom, the default should be the first section
-  $('<option>').val('all').text('所有段落').appendTo($sectionSelect)
+  $('<option>').val('all').text(wgULS('所有章节', '所有章節')).appendTo($sectionSelect)
 
   updateForRole($topView)
 
@@ -757,7 +757,7 @@ async function spiHelperGenerateForm () {
     if (spiHelperSectionId) {
       $('#spiHelper_moveHeader', $actionView).text(wgULS('移动章节“', '移動章節「') + spiHelperSectionName + wgULS('”', '」'))
     } else {
-      $('#spiHelper_moveHeader', $actionView).text(wgULS('移动/合并全部案件', '移動/合併全部案件'))
+      $('#spiHelper_moveHeader', $actionView).text(wgULS('合并整个案件', '合併整個案件'))
     }
   } else {
     $('#spiHelper_moveView', $actionView).hide()
@@ -1113,7 +1113,7 @@ async function spiHelperPerformActions () {
   if (spiHelperSectionId) {
     logMessage += wgULS('（章节', '（章節') + spiHelperSectionName + '）'
   } else {
-    logMessage += wgULS('（完整章节）', '（完整章節）')
+    logMessage += wgULS('（所有章节）', '（所有章節）')
   }
   logMessage += '~~~~~'
 
@@ -1742,6 +1742,7 @@ async function spiHelperLog (logString) {
  * old case name, add the original sockmaster to the sock list for reference
  *
  * @param {string} oldCasePage Title of the previous case page
+ * @param {boolean} addOldName Whether to add old case name
  */
 async function spiHelperPostRenameCleanup (oldCasePage, addOldName) {
   'use strict'
@@ -1771,7 +1772,7 @@ async function spiHelperPostRenameCleanup (oldCasePage, addOldName) {
 
   // The new case's archivenotice should be updated with the new name
   let newPageText = await spiHelperGetPageText(spiHelperPageName, true)
-  newPageText = newPageText.replace(spiHelperArchiveNoticeRegex, '{{SPI archive notice|' + spiHelperCaseName + '}}')
+  newPageText = newPageText.replace(spiHelperArchiveNoticeRegex, '{{SPI archive notice|1=' + spiHelperCaseName + '$2}}')
   // We also want to add the previous master to the sock list
   // We use SOCK_SECTION_RE_WITH_NEWLINE to clean up any extraneous whitespace
   if (addOldName) {
@@ -1795,19 +1796,27 @@ async function spiHelperPostRenameCleanup (oldCasePage, addOldName) {
 /**
  * Cleanups following a merge - re-insert the original page text
  *
+ * @param {string} oldCasePage Title of the previous case page
  * @param {string} originalText Text of the page pre-merge
+ * @param {boolean} addOldName Whether to add old case name
  */
-async function spiHelperPostMergeCleanup (originalText) {
+async function spiHelperPostMergeCleanup (oldCasePage, originalText, addOldName) {
   'use strict'
+  const oldCaseName = oldCasePage.replace(/Wikipedia:傀儡調查\/案件\//g, '')
+
   let newText = await spiHelperGetPageText(spiHelperPageName, false)
   // Remove the SPI header templates from the page
-  newText = newText.replace(/\n*<noinclude>__TOC__.*\n/ig, '')
-  newText = newText.replace(spiHelperArchiveNoticeRegex, '')
-  newText = newText.replace(spiHelperPriorCasesRegex, '')
-  newText = originalText + '\n' + newText
+  originalText = originalText.replace(/\n*<noinclude>__TOC__.*\n/ig, '')
+  originalText = originalText.replace(spiHelperArchiveNoticeRegex, '')
+  originalText = originalText.replace(spiHelperPriorCasesRegex, '')
+  if (addOldName) {
+    originalText = originalText.replace(spiHelperSockSectionWithNewlineRegex, '==== 疑似傀儡 ====' +
+    '\n* {{checkuser|1=' + oldCaseName + '|bullet=no}}（{{clerknote}}：' + wgULS('原始案件名称', '原始案件名稱') + '）\n')
+  }
+  newText += '\n' + originalText
 
   // Write the updated case
-  await spiHelperEditPage(spiHelperPageName, newText, wgULS('合并后重新加入以前的案件', '合併後重新加入以前的案件'), false, spiHelperSettings.watchCase, spiHelperSettings.watchCaseExpiry, spiHelperStartingRevID)
+  await spiHelperEditPage(spiHelperPageName, newText, wgULS('合并案件', '合併案件'), false, spiHelperSettings.watchCase, spiHelperSettings.watchCaseExpiry, spiHelperStartingRevID)
   // Update to the latest revision ID
   spiHelperStartingRevID = await spiHelperGetPageRev(spiHelperPageName)
 }
@@ -1913,32 +1922,16 @@ async function spiHelperArchiveCaseSection (sectionId) {
  *
  * @param {string} target The username portion of the case this section should be merged into
  *                        (should have been normalized before getting passed in)
+ * @param {boolean} addOldName Whether to add old case name
  */
 async function spiHelperMoveCase (target, addOldName) {
   // Move or merge an entire case
   // Normalize: change underscores to spaces
   // target = target
   const newPageName = spiHelperPageName.replace(spiHelperCaseName, target)
+  const sourcePageText = await spiHelperGetPageText(spiHelperPageName, false)
   const targetPageText = await spiHelperGetPageText(newPageName, false)
-  if (targetPageText) {
-    if (spiHelperIsAdmin()) {
-      const proceed = confirm(wgULS('目标页面已存在，您想要对该案件合并历史吗？', '目標頁面已存在，您想要對該案件合併歷史嗎？'))
-      if (!proceed) {
-        // Build out the error line
-        $('<li>')
-          .append($('<div>').addClass('spihelper-errortext')
-            .append($('<b>').text(wgULS('取消合并。', '取消合併。'))))
-          .appendTo($('#spiHelper_status', document))
-        return
-      }
-    } else {
-      $('<li>')
-        .append($('<div>').addClass('spihelper-errortext')
-          .append($('<b>').text(wgULS('目标页面已存在，而您不是管理员，取消合并。', '目標頁面已存在，而您不是管理員，取消合併。'))))
-        .appendTo($('#spiHelper_status', document))
-      return
-    }
-  }
+
   const oldPageName = spiHelperPageName
   if (newPageName === oldPageName) {
     $('<li>')
@@ -1972,102 +1965,24 @@ async function spiHelperMoveCase (target, addOldName) {
       targetArchiveText += '\n' + sourceArchiveText
       await spiHelperEditPage(newArchiveName, targetArchiveText, wgULS('从', '從') + '[[' + oldArchiveName + ']]' + wgULS('复制存档，参见页面历史', '複製存檔，參見頁面歷史'),
         false, spiHelperSettings.watchArchive, spiHelperSettings.watchArchiveExpiry)
-      await spiHelperDeletePage(oldArchiveName, wgULS('删除已复制的存档', '刪除已複製的存檔'))
       archivesCopied = true
     }
-    // Now get existing protection levels on the target and existing page.
-    const oldPageNameProtection = await spiHelperGetProtectionInformation(oldPageName)
-    const newPageNameProtection = await spiHelperGetProtectionInformation(spiHelperPageName)
-    const newProtectionValues = []
-    const siteProtectionInformation = await spiHelperGetSiteRestrictionInformation()
-    // First find if both the old page and new page had the same protection type enabled
-    siteProtectionInformation.types.forEach((type) => {
-      let oldPageNameEntry = oldPageNameProtection.filter((dict) => { return dict.type === type })
-      let newPageNameEntry = newPageNameProtection.filter((dict) => { return dict.type === type })
-      if (oldPageNameEntry.length > 0 && newPageNameEntry.length > 0) {
-        const newProtectionDict = { type: oldPageNameEntry.type }
-        oldPageNameEntry = oldPageNameEntry[0]
-        newPageNameEntry = newPageNameEntry[0]
-        if (newPageNameEntry.expiry === 'infinity' || oldPageNameEntry.expiry === 'infinity' || newPageNameEntry.expiry === 'infinite' || oldPageNameEntry.expiry === 'infinite') {
-          newProtectionDict.push({ expiry: 'infinite' })
-        } else if (newPageNameEntry.expiry < oldPageNameEntry.expiry) {
-          newProtectionDict.push({ expiry: oldPageNameEntry.expiry })
-        } else {
-          newProtectionDict.push({ expiry: newPageNameEntry.expiry })
-        }
-        const oldPageNameEntryLevelIndex = siteProtectionInformation.levels.indexOf(oldPageNameEntry.level)
-        const newPageNameEntryLevelIndex = siteProtectionInformation.levels.indexOf(newPageNameEntry.level)
-        if (oldPageNameEntryLevelIndex === -1 || newPageNameEntryLevelIndex === -1) {
-          console.error('Invalid protection information provided from API')
-          return
-        } else if (oldPageNameEntryLevelIndex > newPageNameEntryLevelIndex) {
-          newProtectionDict.push({ level: oldPageNameEntry.level })
-        } else if (oldPageNameEntryLevelIndex <= newPageNameEntryLevelIndex) {
-          newProtectionDict.push({ level: newPageNameEntry.level })
-        }
-        newProtectionValues.push(newProtectionDict)
-      } else if (oldPageNameEntry.length > 0) {
-        newProtectionValues.push(oldPageNameEntry[0])
-      } else if (newPageNameEntry.length > 0) {
-        newProtectionValues.push(newPageNameEntry[0])
-      }
-    })
-    // Now handle pending changes protection
-    const oldPageNameStabilisation = await spiHelperGetStabilisationSettings(oldPageName)
-    const newPageNameStabilisation = await spiHelperGetStabilisationSettings(spiHelperPageName)
-    let newStabilisationSettings = { protection_level: '' }
-    if (oldPageNameStabilisation !== false && newPageNameStabilisation !== false) {
-      // Pending changes is used on both pages
-      if (newPageNameStabilisation.protection_expiry === 'infinity' || oldPageNameStabilisation.protection_expiry === 'infinity' || newPageNameStabilisation.protection_expiry === 'infinite' || oldPageNameStabilisation.protection_expiry === 'infinite') {
-        newStabilisationSettings.push({ protection_expiry: 'infinite' })
-      } else if (newPageNameStabilisation.protection_expiry < oldPageNameStabilisation.expiry) {
-        newStabilisationSettings.push({ protection_expiry: oldPageNameStabilisation.protection_expiry })
-      } else {
-        newStabilisationSettings.push({ protection_expiry: newPageNameStabilisation.protection_expiry })
-      }
-      const oldPageNameEntryLevelIndex = siteProtectionInformation.levels.indexOf(oldPageNameStabilisation.protection_level)
-      const newPageNameEntryLevelIndex = siteProtectionInformation.levels.indexOf(newPageNameStabilisation.protection_level)
-      if (oldPageNameEntryLevelIndex === -1 || newPageNameEntryLevelIndex === -1) {
-        console.error('Invalid protection information provided from API')
-        return
-      } else if (oldPageNameEntryLevelIndex > newPageNameEntryLevelIndex) {
-        newStabilisationSettings.push({ level: oldPageNameStabilisation.protection_level })
-      } else if (oldPageNameEntryLevelIndex <= newPageNameEntryLevelIndex) {
-        newStabilisationSettings.push({ level: newPageNameStabilisation.protection_level })
-      }
-    } else if (oldPageNameStabilisation !== false) {
-      newStabilisationSettings = oldPageNameStabilisation
-    } else if (newPageNameStabilisation !== false) {
-      newStabilisationSettings = newPageNameStabilisation
-    }
-    // Ignore warnings on the move, we're going to get one since we're stomping an existing page
-    await spiHelperDeletePage(spiHelperPageName, wgULS('因案件合并而删除', '因案件合併而刪除'))
-    await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('合并案件到', '合併案件到') + '[[' + spiHelperPageName + ']]', true)
-    await spiHelperUndeletePage(spiHelperPageName, wgULS('合并后还原页面历史', '合併後還原頁面歷史'))
+
     if (archivesCopied) {
       // Create a redirect
       spiHelperEditPage(oldArchiveName, '#REDIRECT [[' + newArchiveName + ']]', wgULS('将旧存档重定向到新存档', '將舊存檔重新導向到新存檔'),
         false, spiHelperSettings.watchArchive, spiHelperSettings.watchArchiveExpiry)
     }
-    // Now to protect both the oldPageName and newPageName with the protection settings in newProtectionDict, unless it is empty (i.e. no protection needed)
-    // Also apply any pending changes needed (i.e. if newStabilisationSettings has a non-empty protection_level)
-    if (newProtectionValues.length !== 0) {
-      const summary = wgULS('在合并历史后恢复原先的保护', '在合併歷史後恢復原先的保護')
-      spiHelperProtectPage(spiHelperPageName, newProtectionValues, summary)
-      spiHelperProtectPage(oldPageName, newProtectionValues, summary)
-    }
-    if (newStabilisationSettings.protection_level !== '') {
-      spiHelperConfigurePendingChanges(spiHelperPageName, newStabilisationSettings)
-      spiHelperConfigurePendingChanges(oldPageName, newStabilisationSettings)
-    }
   } else {
     await spiHelperMovePage(oldPageName, spiHelperPageName, wgULS('移动案件到', '移動案件到') + '[[' + spiHelperPageName + ']]', false)
   }
   spiHelperStartingRevID = await spiHelperGetPageRev(spiHelperPageName)
-  await spiHelperPostRenameCleanup(oldPageName, addOldName)
   if (targetPageText) {
     // If there was a page there before, also need to do post-merge cleanup
-    await spiHelperPostMergeCleanup(targetPageText)
+    await spiHelperPostRenameCleanup(oldPageName, false)
+    await spiHelperPostMergeCleanup(oldPageName, sourcePageText, addOldName)
+  } else {
+    await spiHelperPostRenameCleanup(oldPageName, addOldName)
   }
   if (archivesCopied) {
     alert(wgULS('存档已在移动案件时被合并，请重新排序存档章节', '存檔已在移動案件時被合併，請重新排序存檔章節'))
@@ -3154,7 +3069,7 @@ async function spiHelperSetCheckboxesBySection () {
     // Show inputs only visible in all-case mode
     $('.spiHelper_allCasesOnly', $topView).show()
     // Fix the move label
-    $('#spiHelper_moveLabel', $topView).text(wgULS('移动/合并完整案件（仅限助理）', '移動/合併完整案件（僅限助理）'))
+    $('#spiHelper_moveLabel', $topView).text(wgULS('合并整个案件（仅限助理）', '合併整個案件（僅限助理）'))
     // enable the move box
     $moveBox.prop('disabled', false)
   } else {

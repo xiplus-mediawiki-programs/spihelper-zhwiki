@@ -3532,7 +3532,6 @@ function spiHelperNormalizeUsername (username) {
   }
   return username
 }
-// </nowiki>
 
 /**
  * Parse key features from an archivenotice
@@ -3631,3 +3630,5 @@ async function spiHelperAddBlankUserLine (tableName) {
   }
   updateForRole()
 }
+
+// </nowiki>

@@ -478,6 +478,10 @@ const spiHelperActionViewHTML = `
         <input type="checkbox" name="spiHelper_tagAccountsWithoutLocalAccount" id="spiHelper_tagAccountsWithoutLocalAccount" />
         <label for="spiHelper_tagAccountsWithoutLocalAccount">` + wgULS('标记没有附加本地账户的账户。', '標記沒有附加本地帳號的帳號。') + `</label>
       </li>
+      <li class="spiHelper_adminClass">
+        <input type="checkbox" name="spiHelper_blockSummaryNoLink" id="spiHelper_blockSummaryNoLink" />
+        <label for="spiHelper_blockSummaryNoLink">` + wgULS('封禁摘要不链接到调查页面', '封鎖摘要不連結到調查頁面') + `（WP:DENY）</label>
+      </li>
       <li class="spiHelper_cuClass">
         <input type="checkbox" name="spiHelper_cublock" id="spiHelper_cublock" />
         <label for="spiHelper_cublock">` + wgULS('标记为用户查核封禁', '標記為使用者查核封鎖') + `</label>
@@ -992,6 +996,7 @@ async function spiHelperPerformActions () {
 
   // set up a few function-scoped vars
   let comment = ''
+  let blockSummaryNoLink = false
   let cuBlock = false
   let cuBlockOnly = false
   let newCaseStatus = 'noaction'
@@ -1022,6 +1027,7 @@ async function spiHelperPerformActions () {
       cuBlock = $('#spiHelper_cublock', $actionView).prop('checked')
       cuBlockOnly = $('#spiHelper_cublockonly', $actionView).prop('checked')
     }
+    blockSummaryNoLink = $('#spiHelper_blockSummaryNoLink', $actionView).prop('checked')
     if (spiHelperIsAdmin() && !$('#spiHelper_noblock', $actionView).prop('checked')) {
       const masterNotice = $('#spiHelper_blocknoticemaster', $actionView).prop('checked')
       const sockNotice = $('#spiHelper_blocknoticesocks', $actionView).prop('checked')
@@ -1287,7 +1293,10 @@ async function spiHelperPerformActions () {
         }
         const isIP = mw.util.isIPAddress(blockEntry.username, true)
         const isIPRange = isIP && !mw.util.isIPAddress(blockEntry.username, false)
-        let blockSummary = wgULS('滥用[[WP:SOCK|多个账户]]：请参见', '濫用[[WP:SOCK|多個帳號]]：請參見') + '[[' + spiHelperPageName + ']]'
+        let blockSummary = wgULS('滥用[[WP:SOCK|多个账户]]', '濫用[[WP:SOCK|多個帳號]]')
+        if (!blockSummaryNoLink) {
+          blockSummary += wgULS('：请参见', '：請參見') + '[[' + spiHelperPageName + ']]'
+        }
         if (spiHelperIsCheckuser() && cuBlock) {
           const cublockTemplate = isIP ? ('{{checkuserblock}}') : ('{{checkuserblock-account}}')
           if (cuBlockOnly) {

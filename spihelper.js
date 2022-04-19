@@ -1294,19 +1294,18 @@ async function spiHelperPerformActions () {
         const isIP = mw.util.isIPAddress(blockEntry.username, true)
         const isIPRange = isIP && !mw.util.isIPAddress(blockEntry.username, false)
         let blockSummary = wgULS('滥用[[WP:SOCK|多个账户]]', '濫用[[WP:SOCK|多個帳號]]')
-        if (!blockSummaryNoLink) {
-          blockSummary += wgULS('：请参见', '：請參見') + '[[' + spiHelperPageName + ']]'
-        }
         if (spiHelperIsCheckuser() && cuBlock) {
           const cublockTemplate = isIP ? ('{{checkuserblock}}') : ('{{checkuserblock-account}}')
           if (cuBlockOnly) {
             blockSummary = cublockTemplate
           } else {
-            blockSummary = cublockTemplate + ': ' + blockSummary
+            blockSummary = cublockTemplate + '：' + blockSummary
           }
         } else if (isIPRange) {
-          blockSummary = '{{rangeblock| ' + blockSummary +
-            (blockEntry.acb ? '' : '|create=yes') + '}}'
+          blockSummary = '{{Range block}}'
+        }
+        if (!blockSummaryNoLink) {
+          blockSummary += '<!-- ' + wgULS('请参见', '請參見') + '[[' + spiHelperPageName + ']] -->'
         }
         const blockSuccess = await spiHelperBlockUser(
           blockEntry.username,
@@ -3420,6 +3419,7 @@ function spiHelperIsCheckuser () {
     return spiHelperSettings.debugForceCheckuserState
   }
   return mw.config.get('wgUserGroups').includes('checkuser') ||
+    mw.config.get('wgUserGroups').includes('sysop') || // Allow sysop to perform CU block
     spiHelperSettings.clerk // Allow clerk to use CU functions when there is no local CU
 }
 

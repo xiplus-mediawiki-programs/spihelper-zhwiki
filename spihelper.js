@@ -233,7 +233,8 @@ const spiHelperAdminTemplates = [
   { label: wgULS('已封禁、等待标记', '已封鎖、等待標記'), selected: false, value: '{{sblock}}' },
   { label: wgULS('已封禁、标记、关闭', '已封鎖、標記、關閉'), selected: false, value: '{{Blockedtaggedclosing}}' },
   { label: wgULS('请求的操作已完成，关闭', '請求的操作已完成，關閉'), selected: false, value: '{{Action and close}}' },
-  { label: wgULS('需要更多信息', '需要更多資訊'), selected: false, value: '{{DiffsNeeded|moreinfo}}' }
+  { label: wgULS('需要更多信息', '需要更多資訊'), selected: false, value: '{{DiffsNeeded|moreinfo}}' },
+  { label: wgULS('关闭', '關閉'), selected: false, value: '{{Close}}' }
   // { label: 'Locks requested', selected: false, value: '{{GlobalLocksRequested}}' },
 ]
 

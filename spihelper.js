@@ -1294,7 +1294,7 @@ async function spiHelperPerformActions () {
         }
         const isIP = mw.util.isIPAddress(blockEntry.username, true)
         const isIPRange = isIP && !mw.util.isIPAddress(blockEntry.username, false)
-        let blockSummary = wgULS('滥用[[WP:SOCK|多个账户]]', '濫用[[WP:SOCK|多個帳號]]')
+        let blockSummary = isIP ? wgULS('滥用[[WP:SOCK|多个账户]]', '濫用[[WP:SOCK|多個帳號]]') : wgULS('滥用[[WP:SOCK|多个IP地址]]', '濫用[[WP:SOCK|多個IP位址]]')
         if (spiHelperIsCheckuser() && cuBlock) {
           const cublockTemplate = isIP ? ('{{checkuserblock}}') : ('{{checkuserblock-account}}')
           if (cuBlockOnly) {

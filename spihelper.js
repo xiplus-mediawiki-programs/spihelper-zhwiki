@@ -8,7 +8,7 @@
 /* global mw, $, displayMessage, spiHelperCustomOpts, wgULS */
 
 // Adapted from [[User:Mr.Z-man/closeAFD]]
-mw.loader.load('https://en.wikipedia.org/w/index.php?title=User:GeneralNotability/spihelper.css&action=raw&ctype=text/css', 'text/css')
+mw.loader.load('https://zh.wikipedia.org/w/index.php?title=User:Xiplus/js/spihelper.css&action=raw&ctype=text/css', 'text/css')
 mw.loader.load('https://en.wikipedia.org/w/index.php?title=User:Timotheus_Canens/displaymessage.js&action=raw&ctype=text/javascript')
 
 // Typedefs

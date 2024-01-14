@@ -43,4 +43,4 @@ jobs:
           echo "('Xiplus', BotPassword('${BOT_NAME}', '${BOT_PASS}'))" > user-password.py
           chmod 600 user-password.py
           python3 deploy.py --file spihelper.js --target User:Xiplus/js/spihelper.js --summary "${{ steps.vars.outputs.sha_short }} ${{ github.event.head_commit.message }}"
-          # python3 deploy.py --file spihelper.css --target User:Xiplus/js/spihelper.css --summary "${{ steps.vars.outputs.sha_short }} ${{ github.event.head_commit.message }}"
+          python3 deploy.py --file spihelper.css --target User:Xiplus/js/spihelper.css --summary "${{ steps.vars.outputs.sha_short }} ${{ github.event.head_commit.message }}"

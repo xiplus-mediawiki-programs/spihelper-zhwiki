@@ -3367,7 +3367,8 @@ async function spiHelperLoadSettings () {
   // Dynamically load a user's settings
   // Borrowed from code I wrote for [[User:Headbomb/unreliable.js]]
   try {
-    await mw.loader.getScript('/w/index.php?title=Special:MyPage/spihelper-options.js&action=raw&ctype=text/javascript')
+    // Special:MyPage no longer supports action=raw, so build the user page title directly
+    await mw.loader.getScript(mw.util.wikiScript('index') + '?title=User:' + encodeURIComponent(mw.config.get('wgUserName')) + '/spihelper-options.js&action=raw&ctype=text/javascript')
     if (typeof spiHelperCustomOpts !== 'undefined') {
       const keys = Object.keys(spiHelperCustomOpts)
       for (let index = 0; index < keys.length; index++) {
